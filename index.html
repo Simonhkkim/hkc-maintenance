@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="ko">
-<head>
-<meta charset="UTF-8">
+<!-- saved from url=(0113)file:///D:/%EB%8B%A4%EC%9A%B4%EB%A1%9C%EB%93%9C/HKC_%EC%9C%A0%EC%A7%80%EB%B3%B4%EC%88%98%EC%9D%BC%EC%A7%80_1.html -->
+<html lang="ko"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#1D3557">
 <meta name="mobile-web-app-capable" content="yes">
@@ -9,6 +9,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="한국클라우드">
 <title>한국클라우드 유지보수일지</title>
+<!-- Supabase JS Client -->
+<script src="./한국클라우드 유지보수일지_files/supabase.js.다운로드"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;overflow:hidden;background:#E8EEF8}
@@ -240,9 +242,41 @@ input[list]{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3
 .csv-modal-btn{width:100%;background:linear-gradient(135deg,#E8911A,#F0A832);border:none;border-radius:12px;padding:14px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 14px rgba(232,145,26,.35)}
 .csv-modal-btn:active{opacity:.88}
 </style>
-</head>
+<link rel="manifest" href="blob:null/e18bde36-7fc2-4882-ad65-fd8bbb2c0f41"></head>
 <body>
-<div id="app"></div>
+<div id="app"><div class="login">
+
+    <!-- 상단: 네이비 브랜드 영역 -->
+    <div class="login-top">
+      <div class="login-ko"><span>한국</span>클라우드</div>
+      <div class="login-accent"></div>
+      <div class="login-en-row">
+        <span class="login-en">HANKOOK CLOUD</span>
+        <span class="login-dot"></span>
+        <span class="login-tagline">유지보수 작업일지</span>
+      </div>
+    </div>
+
+    <!-- 하단: 로그인 카드 -->
+    <div class="login-bottom">
+      <div class="login-card">
+        <label class="login-label">사원번호 / 관리자 ID</label>
+        <input id="lid" class="login-id-input" placeholder="예: E001, A001" autocomplete="username">
+
+        <label class="login-label">비밀번호</label>
+        <div class="pw-wrap">
+          <input id="lpw" class="login-pw-input" type="password" placeholder="비밀번호를 입력하세요" autocomplete="current-password">
+          <button class="pw-eye" id="pw-toggle" type="button"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg></button>
+        </div>
+
+        <div id="lerr" class="login-err"></div>
+        <button class="login-btn" id="lbtn">로그인<span class="login-btn-accent">→</span></button>
+        <div class="login-divider"></div>
+        <div class="login-hint">엔지니어: E001~E003 / 1234&nbsp;&nbsp;|&nbsp;&nbsp;관리자: A001 / admin</div>
+      </div>
+    </div>
+
+  </div></div>
 <script>
 'use strict';
 
@@ -300,41 +334,33 @@ const SAMPLE_LOGS=[
 ];
 
 /* ═══════════════════════════════════════════════════════
-   ③ INDEXEDDB
+   ③ SUPABASE 설정 ★ 여기에 본인 키를 입력하세요 ★
 ═══════════════════════════════════════════════════════ */
-const DB={name:'hkc_v3',ver:1,instance:null};
-function openDB(){
-  return new Promise((ok,err)=>{
-    const req=indexedDB.open(DB.name,DB.ver);
-    req.onupgradeneeded=e=>{
-      const db=e.target.result;
-      if(!db.objectStoreNames.contains('logs')){
-        const s=db.createObjectStore('logs',{keyPath:'id',autoIncrement:true});
-        s.createIndex('empId','empId',{unique:false});
-        s.createIndex('custName','custName',{unique:false});
-      }
-      if(!db.objectStoreNames.contains('employees')) db.createObjectStore('employees',{keyPath:'id'});
-      if(!db.objectStoreNames.contains('customers')) db.createObjectStore('customers',{keyPath:'id',autoIncrement:true});
-      if(!db.objectStoreNames.contains('meta')) db.createObjectStore('meta',{keyPath:'key'});
-    };
-    req.onsuccess=e=>{DB.instance=e.target.result;ok();};
-    req.onerror=()=>err(req.error);
-  });
-}
-const tx=(s,m='readonly')=>DB.instance.transaction(s,m).objectStore(s);
-const dbGet=(s,k)=>new Promise((ok,er)=>{const r=tx(s).get(k);r.onsuccess=()=>ok(r.result);r.onerror=er;});
-const dbPut=(s,v)=>new Promise((ok,er)=>{const r=tx(s,'readwrite').put(v);r.onsuccess=()=>ok(r.result);r.onerror=er;});
-const dbAdd=(s,v)=>new Promise((ok,er)=>{const r=tx(s,'readwrite').add(v);r.onsuccess=()=>ok(r.result);r.onerror=er;});
-const dbAll=(s)=>new Promise((ok,er)=>{const r=tx(s).getAll();r.onsuccess=()=>ok(r.result);r.onerror=er;});
+const SUPABASE_URL = 'https://fnsshneehtsjvulkwhvj.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_cuaJ2zQyhJpUHiEbDWe3sg_DuL5H9A ';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-async function ensureDefaults(){
-  const seeded=await dbGet('meta','seeded');
-  if(seeded) return;
-  for(const e of DEFAULT_EMPLOYEES) await dbPut('employees',e);
-  for(const c of DEFAULT_CUSTOMERS) await dbPut('customers',c);
-  for(const l of SAMPLE_LOGS) await dbPut('logs',l);
-  await dbPut('meta',{key:'seeded',val:true});
-}
+/* ── DB ↔ JS 필드명 변환 헬퍼 ─────────────────────────── */
+const toLog = r => ({
+  id:        r.id,
+  empId:     r.emp_id,   empName:  r.emp_name,
+  custName:  r.cust_name, projName: r.proj_name,
+  visitDate: r.visit_date, content: r.content,
+  status:    r.status,
+  requests:  Array.isArray(r.requests) ? r.requests : [],
+  nextVisit: r.next_visit,
+  createdAt: r.created_at,
+});
+const fromLog = l => ({
+  emp_id:     l.empId,    emp_name:  l.empName,
+  cust_name:  l.custName, proj_name: l.projName,
+  visit_date: l.visitDate, content:  l.content,
+  status:     l.status,
+  requests:   l.requests || [],
+  next_visit: l.nextVisit || null,
+  created_at: l.createdAt || new Date().toISOString(),
+});
+const toCust = r => ({id:r.id, name:r.name, projects: Array.isArray(r.projects)?r.projects:[]});
 
 /* ═══════════════════════════════════════════════════════
    ④ APP STATE
@@ -356,8 +382,22 @@ const fmt=n=>Number(n).toLocaleString('ko-KR')+'원';
 const fmtDate=s=>s?s.replace(/-/g,'.'):'';
 const statusBadge=s=>({완료:'b-ok',진행중:'b-progress',보류:'b-hold',재방문필요:'b-revisit'}[s]||'b-hold');
 async function loadData(){
-  [S.logs,S.employees,S.customers]=await Promise.all([dbAll('logs'),dbAll('employees'),dbAll('customers')]);
-  S.logs.sort((a,b)=>new Date(b.createdAt||b.visitDate)-new Date(a.createdAt||a.visitDate));
+  try{
+    const [logsRes,empsRes,custsRes]=await Promise.all([
+      sb.from('hkc_logs').select('*').order('created_at',{ascending:false}),
+      sb.from('hkc_employees').select('*'),
+      sb.from('hkc_customers').select('*'),
+    ]);
+    if(logsRes.error) throw logsRes.error;
+    if(empsRes.error) throw empsRes.error;
+    if(custsRes.error) throw custsRes.error;
+    S.logs      = (logsRes.data||[]).map(toLog);
+    S.employees = empsRes.data||[];
+    S.customers = (custsRes.data||[]).map(toCust);
+  }catch(e){
+    console.error('Supabase 오류:',e);
+    showToast('⚠️ DB 연결 실패 — Supabase URL/KEY를 확인하세요');
+  }
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -368,7 +408,7 @@ const root=document.getElementById('app');
 function render(){
   if(!S.user){root.innerHTML=renderLogin();bindLogin();return;}
   root.innerHTML=`
-    ${S.offline?`<div class="offline-bar">📵 오프라인 모드 — 데이터는 기기에 저장됩니다</div>`:''}
+    ${S.offline?`<div class="offline-bar">📵 오프라인 — 인터넷 연결 후 데이터가 저장됩니다</div>`:''}
     ${renderHeader()}
     <div class="screen" id="screen">
       ${S.tab==='new'?renderNewLog():S.tab==='my'?renderMyLogs():renderAdmin()}
@@ -777,8 +817,13 @@ function bindNewLog(){
   document.getElementById('btn-save')?.addEventListener('click',async()=>{
     if(!nl.custName||!nl.projName||!nl.content){showToast('⚠️ 고객사, 프로젝트, 작업내용은 필수입니다');return;}
     const log={...nl,empId:S.user.id,empName:S.user.name,createdAt:new Date().toISOString()};
-    const id=await dbAdd('logs',log);
-    S.logs.unshift({...log,id});
+    try{
+      const{data,error}=await sb.from('hkc_logs').insert(fromLog(log)).select().single();
+      if(error) throw error;
+      S.logs.unshift(toLog(data));
+    }catch(e){
+      showToast('⚠️ 저장 실패: '+e.message);return;
+    }
     S.newLog={custName:'',projName:'',visitDate:today(),content:'',status:'완료',nextVisit:'',requests:[]};
     S.saved=true;render();
     setTimeout(()=>{S.saved=false;render();},2400);
@@ -800,9 +845,12 @@ function bindModal(){
     const name=(document.getElementById('new-cust-name')?.value||'').trim();
     if(!name){showToast('⚠️ 고객사명을 입력하세요');return;}
     if(S.customers.find(c=>c.name===name)){showToast('이미 등록된 고객사입니다');return;}
-    const id=await dbAdd('customers',{name,projects:[]});
-    S.customers.push({id,name,projects:[]});
-    showToast(`✅ ${name} 추가됨`);render();
+    try{
+      const{data,error}=await sb.from('hkc_customers').insert({name,projects:[]}).select().single();
+      if(error) throw error;
+      S.customers.push(toCust(data));
+      showToast('✅ '+name+' 추가됨');render();
+    }catch(e){showToast('⚠️ 추가 실패: '+e.message);}
   });
 }
 
@@ -863,7 +911,8 @@ function setupPWA(){
 window.addEventListener('online',()=>{S.offline=false;render();});
 window.addEventListener('offline',()=>{S.offline=true;render();});
 
-(async()=>{setupPWA();await openDB();await ensureDefaults();await loadData();render();})();
+(async()=>{setupPWA();await loadData();render();})();
 </script>
-</body>
-</html>
+
+
+</body></html>
