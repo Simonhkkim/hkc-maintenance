@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<!-- saved from url=(0111)file:///D:/%EB%8B%A4%EC%9A%B4%EB%A1%9C%EB%93%9C/HKC_%EC%9C%A0%EC%A7%80%EB%B3%B4%EC%88%98%EC%9D%BC%EC%A7%80.html -->
+<html lang="ko"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#1B2A3B">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="HKC일지">
+<title>HKC 유지보수일지</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;background:#1B2A3B}
+body{font-family:-apple-system,BlinkMacSystemFont,'Noto Sans KR','Malgun Gothic',sans-serif;color:#1A1A2E;font-size:14px}
+#app{max-width:480px;margin:0 auto;height:100dvh;display:flex;flex-direction:column;background:#F0F2F5;overflow:hidden;position:relative}
+.screen{flex:1;overflow-y:auto;padding:14px;padding-bottom:82px;-webkit-overflow-scrolling:touch}
+.screen::-webkit-scrollbar{display:none}
+
+/* ── Header ── */
+.hdr{background:#1B2A3B;padding:13px 16px 13px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;padding-top:max(13px,env(safe-area-inset-top))}
+.hdr-left h1{font-size:14px;font-weight:600;color:#fff;letter-spacing:-0.2px}
+.hdr-left p{font-size:11px;color:#8BA0B8;margin-top:1px}
+.hdr-actions{display:flex;gap:6px;align-items:center}
+.btn-hdr{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:6px;padding:5px 10px;color:#8BA0B8;font-size:11px;cursor:pointer;font-family:inherit}
+.btn-hdr:active{background:rgba(255,255,255,0.15)}
+
+/* ── Bottom Nav ── */
+.nav{background:#fff;border-top:1px solid #E5E7EB;display:flex;flex-shrink:0;padding-bottom:max(0px,env(safe-area-inset-bottom))}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;padding:10px 8px 8px;background:none;border:none;cursor:pointer;gap:3px;transition:opacity .15s;font-family:inherit}
+.nav-btn svg{width:22px;height:22px;stroke-width:1.8;fill:none;stroke:#9EA3B5;transition:stroke .15s}
+.nav-btn span{font-size:10px;color:#9EA3B5;transition:color .15s}
+.nav-btn.active svg{stroke:#E8911A}
+.nav-btn.active span{color:#E8911A;font-weight:500}
+.nav-btn:active{opacity:.7}
+
+/* ── Cards ── */
+.card{background:#fff;border-radius:12px;padding:13px 14px;margin-bottom:10px;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+.card-row{display:grid;gap:10px}
+.card-row.two{grid-template-columns:1fr 1fr}
+.fl{font-size:11px;color:#6B7280;font-weight:500;margin-bottom:5px}
+
+/* ── Inputs ── */
+select,input[type=text],input[type=date],input[type=number],input[type=password],textarea{
+  width:100%;background:#F8F9FC;border:1px solid #E5E7EB;border-radius:8px;
+  padding:9px 11px;font-size:13px;color:#1A1A2E;font-family:inherit;
+  -webkit-appearance:none;transition:border .15s,background .15s}
+select:focus,input:focus,textarea:focus{outline:none;border-color:#E8911A;background:#fff}
+textarea{resize:vertical;min-height:105px;line-height:1.65}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%236B7280' d='M6 8L0 0h12z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px}
+
+/* ── Buttons ── */
+.btn-primary{background:#E8911A;color:#fff;border:none;border-radius:10px;padding:13px;width:100%;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;font-family:inherit;transition:background .15s}
+.btn-primary:active{background:#C97815}
+.btn-primary.saved{background:#2E7D32}
+.btn-primary svg{width:17px;height:17px;fill:none;stroke:#fff;stroke-width:2}
+.btn-sm{border:none;border-radius:6px;padding:5px 10px;font-size:11px;cursor:pointer;display:flex;align-items:center;gap:4px;font-family:inherit;white-space:nowrap}
+.btn-sm svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2}
+.btn-voice{background:#FEF3E2;color:#B56D0E}
+.btn-voice.rec{background:#FF5252;color:#fff}
+.btn-ai{background:#EEEDFE;color:#534AB7}
+.btn-ai:disabled{opacity:.45;cursor:not-allowed}
+.btn-add{background:none;border:none;color:#E8911A;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:3px;font-family:inherit;font-weight:500}
+.btn-add svg{width:13px;height:13px;fill:none;stroke:#E8911A;stroke-width:2.2}
+.btn-export{background:#F0F2F5;border:1px solid #E5E7EB;border-radius:8px;padding:7px 12px;font-size:12px;color:#4B5563;cursor:pointer;display:flex;align-items:center;gap:5px;font-family:inherit}
+.btn-export svg{width:14px;height:14px;fill:none;stroke:#4B5563;stroke-width:2}
+.btn-icon{background:none;border:none;padding:2px;cursor:pointer;color:#B56D0E}
+.btn-icon svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.2}
+
+/* ── Badges ── */
+.badge{font-size:10px;border-radius:4px;padding:2px 6px;font-weight:500;white-space:nowrap}
+.b-ok{background:#E8F5E9;color:#2E7D32}
+.b-progress{background:#FFF3E0;color:#E8911A}
+.b-hold{background:#F3F4F6;color:#6B7280}
+.b-revisit{background:#FFEBEE;color:#D32F2F}
+.b-req{background:#FEF3E2;color:#B56D0E}
+
+/* ── Recording ── */
+.rec-bar{display:flex;align-items:center;gap:8px;padding:7px 10px;background:#FFEBEE;border-radius:7px;margin-bottom:8px;font-size:12px;color:#FF5252}
+.rec-dot{width:7px;height:7px;border-radius:50%;background:#FF5252;animation:pulse 1s infinite;flex-shrink:0}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ── Request item ── */
+.req-item{background:#FEF3E2;border-radius:8px;padding:10px;margin-bottom:8px}
+.req-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
+.req-label{font-size:11px;color:#B56D0E;font-weight:500}
+.req-amount{font-size:11px;color:#B56D0E;margin-top:4px;font-weight:500}
+.req-item input{margin-bottom:6px}
+.req-item input:last-of-type{margin-bottom:0}
+
+/* ── Log card ── */
+.log-card{background:#fff;border-radius:12px;padding:12px 14px;margin-bottom:10px;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.07);transition:box-shadow .15s}
+.log-card:active{box-shadow:0 0 0 2px #E8911A44}
+.log-top{display:flex;justify-content:space-between;align-items:flex-start}
+.log-meta{flex:1;min-width:0}
+.log-name{font-size:14px;font-weight:500;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.log-proj{font-size:12px;color:#6B7280;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.log-date{font-size:11px;color:#9EA3B5;margin-top:3px}
+.log-chevron svg{width:14px;height:14px;fill:none;stroke:#9EA3B5;stroke-width:2;margin-top:3px;flex-shrink:0}
+.log-detail{margin-top:12px;border-top:1px solid #F0F2F5;padding-top:12px}
+.log-content{font-size:12px;color:#374151;line-height:1.7;margin-bottom:8px}
+
+/* ── Stats ── */
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.stat-card{background:#fff;border-radius:11px;padding:12px 13px;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+.stat-icon{display:flex;align-items:center;gap:5px;margin-bottom:6px}
+.stat-icon svg{width:13px;height:13px;fill:none;stroke:#E8911A;stroke-width:2;flex-shrink:0}
+.stat-icon span{font-size:10px;color:#6B7280}
+.stat-val{font-size:19px;font-weight:500}
+
+/* ── Login ── */
+.login{min-height:100dvh;background:#1B2A3B;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px}
+.login-logo{font-size:36px;font-weight:700;color:#fff;letter-spacing:-1px;margin-bottom:6px}
+.login-sub{font-size:13px;color:#8BA0B8;margin-bottom:36px}
+.login-card{width:100%;background:rgba(255,255,255,0.06);border-radius:16px;padding:24px;border:1px solid rgba(255,255,255,0.1)}
+.login-label{font-size:11px;color:#8BA0B8;font-weight:500;margin-bottom:5px;display:block}
+.login-input{background:rgba(255,255,255,0.08)!important;border:1px solid rgba(255,255,255,0.15)!important;color:#fff!important;margin-bottom:12px}
+.login-input::placeholder{color:rgba(255,255,255,0.25)!important}
+.login-input:focus{border-color:#E8911A!important;background:rgba(255,255,255,0.12)!important}
+.login-btn{width:100%;background:#E8911A;border:none;border-radius:9px;padding:13px;color:#fff;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;margin-top:8px}
+.login-btn:active{background:#C97815}
+.login-err{color:#FF8A80;font-size:12px;margin-bottom:6px;min-height:18px}
+.login-hint{margin-top:20px;font-size:11px;color:#3A5070;text-align:center;line-height:1.8}
+
+/* ── Section title row ── */
+.sec-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.sec-title{font-size:14px;font-weight:500}
+.sec-count{font-size:12px;color:#9EA3B5;font-weight:400}
+
+/* ── Empty state ── */
+.empty{padding:48px 0;text-align:center;color:#9EA3B5}
+.empty svg{width:40px;height:40px;fill:none;stroke:#C9CDD6;stroke-width:1.5}
+.empty p{margin-top:10px;font-size:13px}
+
+/* ── Offline badge ── */
+.offline-bar{background:#FF5252;color:#fff;text-align:center;font-size:12px;padding:5px;flex-shrink:0}
+
+/* ── Toast ── */
+.toast{position:fixed;bottom:88px;left:50%;transform:translateX(-50%);background:#1B2A3B;color:#fff;padding:10px 18px;border-radius:20px;font-size:13px;z-index:999;animation:fiu .3s ease,fout .3s ease 2s forwards;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,.2)}
+@keyframes fiu{from{opacity:0;transform:translateX(-50%) translateY(8px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+@keyframes fout{to{opacity:0}}
+
+/* ── Settings modal ── */
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;display:flex;flex-direction:column;justify-content:flex-end}
+.modal-sheet{background:#fff;border-radius:20px 20px 0 0;padding:20px 16px;padding-bottom:max(20px,env(safe-area-inset-bottom));max-height:75vh;overflow-y:auto}
+.modal-handle{width:36px;height:4px;background:#E5E7EB;border-radius:2px;margin:0 auto 16px}
+.modal-title{font-size:15px;font-weight:600;margin-bottom:14px}
+.settings-item{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid #F3F4F6}
+.settings-item:last-child{border-bottom:none}
+.settings-label{font-size:13px;color:#374151}
+.settings-val{font-size:12px;color:#9EA3B5}
+.chip-list{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.chip{background:#F0F2F5;border:none;border-radius:6px;padding:5px 10px;font-size:12px;color:#4B5563;font-family:inherit;cursor:pointer}
+.chip.sel{background:#FEF3E2;color:#B56D0E;font-weight:500}
+</style>
+<link rel="manifest" href="blob:null/7b51d065-1e7f-49e8-b389-a404296c82ac"></head>
+<body>
+<div id="app"><div class="login">
+    <div class="login-logo">HKC</div>
+    <div class="login-sub">유지보수 작업일지 시스템</div>
+    <div class="login-card">
+      <label class="login-label">사원번호</label>
+      <input id="lid" class="login-input" placeholder="예: E001" autocomplete="username">
+      <label class="login-label" style="margin-top:12px;display:block">비밀번호</label>
+      <input id="lpw" class="login-input" type="password" placeholder="••••" autocomplete="current-password">
+      <div id="lerr" class="login-err"></div>
+      <button class="login-btn" id="lbtn">로그인</button>
+    </div>
+    <div class="login-hint">
+      엔지니어: E001~E003 / 1234<br>관리자: A001 / admin
+    </div>
+  </div></div>
+<script>
+'use strict';
+
+/* ═══════════════════════════════════════════════════════
+   ① SVG ICONS
+═══════════════════════════════════════════════════════ */
+const I={
+  mic:`<svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>`,
+  micOff:`<svg viewBox="0 0 24 24"><line x1="1" y1="1" x2="23" y2="23"/><path d="M9 9v3a3 3 0 005.12 2.12M15 9.34V4a3 3 0 00-5.94-.6"/><path d="M17 16.95A7 7 0 015 12v-2m14 0v2a7 7 0 01-.11 1.23"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>`,
+  wand:`<svg viewBox="0 0 24 24"><path d="M15 4V2M15 16v-2M8 9h2M20 9h2M17.8 11.8L19 13M17.8 6.2L19 5M12.2 6.2L11 5M12.2 11.8L11 13"/><path d="M3 21l9-9"/><path d="M12.2 6.2L11 5M15 8.5a3.5 3.5 0 11-7 0 3.5 3.5 0 017 0z" style="display:none"/><path d="M6.3 6.3a1 1 0 000 1.4l10 10a1 1 0 001.4-1.4l-10-10a1 1 0 00-1.4 0z" style="display:none"/><polyline points="4.5 7.5 4.5 21 18 21"/><path d="M7 3L5.5 1.5 4 3 5.5 4.5zM21 7l-1.5-1.5L18 7l1.5 1.5z"/></svg>`,
+  save:`<svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>`,
+  check:`<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>`,
+  plus:`<svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>`,
+  x:`<svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`,
+  chevD:`<svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>`,
+  chevU:`<svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>`,
+  edit:`<svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`,
+  pencil:`<svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>`,
+  list:`<svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>`,
+  dashboard:`<svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>`,
+  gear:`<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>`,
+  calendar:`<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`,
+  download:`<svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>`,
+  empty:`<svg viewBox="0 0 24 24"><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>`,
+  search:`<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>`,
+  won:`<svg viewBox="0 0 24 24"><line x1="12" y1="2" x2="12" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>`,
+  msg:`<svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>`,
+  clip:`<svg viewBox="0 0 24 24"><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>`,
+};
+
+/* ═══════════════════════════════════════════════════════
+   ② DEFAULT DATA
+═══════════════════════════════════════════════════════ */
+const DEFAULT_EMPLOYEES=[
+  {id:'E001',name:'김민준',role:'engineer',pw:'1234'},
+  {id:'E002',name:'이서연',role:'engineer',pw:'1234'},
+  {id:'E003',name:'박도윤',role:'engineer',pw:'1234'},
+  {id:'A001',name:'최관리자',role:'admin',pw:'admin'},
+];
+const DEFAULT_CUSTOMERS=[
+  {id:1,name:'삼성SDS',projects:['ERP 유지보수','네트워크 인프라']},
+  {id:2,name:'현대자동차',projects:['HR 시스템','MES 유지보수']},
+  {id:3,name:'LG전자',projects:['콜센터 솔루션','CRM 시스템']},
+  {id:4,name:'KT',projects:['컨택센터 운영','AI봇 유지보수']},
+  {id:5,name:'SK텔레콤',projects:['고객관리시스템','채널통합 플랫폼']},
+];
+const SAMPLE_LOGS=[
+  {id:1,empId:'E001',empName:'김민준',custName:'LG전자',projName:'콜센터 솔루션',visitDate:'2026-05-20',content:'월간 정기점검 수행. 서버 3대 상태 확인 및 로그 분석 완료. PostgreSQL 인덱스 최적화로 조회 성능 23% 개선 확인.',status:'완료',requests:[{desc:'통계 리포트 자동생성 기능 추가',amount:3500000}],nextVisit:'2026-06-20',createdAt:'2026-05-20T14:30:00'},
+  {id:2,empId:'E002',empName:'이서연',custName:'KT',projName:'컨택센터 운영',visitDate:'2026-05-19',content:'AI 봇 응답 오류 긴급 수정. 자연어처리 인텐트 매핑 오류 수정 및 재배포 완료. 테스트 시나리오 47개 통과.',status:'완료',requests:[],nextVisit:'2026-06-05',createdAt:'2026-05-19T16:45:00'},
+  {id:3,empId:'E001',empName:'김민준',custName:'삼성SDS',projName:'ERP 유지보수',visitDate:'2026-05-15',content:'분기 정기점검 및 패치 적용. SAP 인터페이스 모듈 업데이트 및 사용자 교육 20명 진행.',status:'완료',requests:[{desc:'모바일 결재 앱 연동 기능',amount:12000000},{desc:'대시보드 권한별 접근 제어',amount:2800000}],nextVisit:'2026-06-15',createdAt:'2026-05-15T11:00:00'},
+  {id:4,empId:'E002',empName:'이서연',custName:'SK텔레콤',projName:'고객관리시스템',visitDate:'2026-05-12',content:'신규 API 연동 테스트 및 데이터 정합성 검증. 총 150만 건 마이그레이션 성공적으로 완료.',status:'완료',requests:[{desc:'실시간 알림 기능 추가',amount:5500000}],nextVisit:'2026-06-10',createdAt:'2026-05-12T15:20:00'},
+  {id:5,empId:'E003',empName:'박도윤',custName:'현대자동차',projName:'MES 유지보수',visitDate:'2026-05-10',content:'MES 시스템 야간 점검. 생산라인 데이터 수집 모듈 이상 감지 및 파라미터 조정 완료.',status:'재방문필요',requests:[{desc:'생산 실적 모니터링 대시보드 신규 개발',amount:18000000}],nextVisit:'2026-05-24',createdAt:'2026-05-10T22:10:00'},
+];
+
+/* ═══════════════════════════════════════════════════════
+   ③ INDEXEDDB LAYER
+═══════════════════════════════════════════════════════ */
+const DB={name:'hkc_v2',ver:1,instance:null};
+
+function openDB(){
+  return new Promise((ok,err)=>{
+    const req=indexedDB.open(DB.name,DB.ver);
+    req.onupgradeneeded=e=>{
+      const db=e.target.result;
+      if(!db.objectStoreNames.contains('logs')){
+        const s=db.createObjectStore('logs',{keyPath:'id',autoIncrement:true});
+        s.createIndex('empId','empId',{unique:false});
+        s.createIndex('custName','custName',{unique:false});
+        s.createIndex('visitDate','visitDate',{unique:false});
+      }
+      if(!db.objectStoreNames.contains('employees'))
+        db.createObjectStore('employees',{keyPath:'id'});
+      if(!db.objectStoreNames.contains('customers'))
+        db.createObjectStore('customers',{keyPath:'id',autoIncrement:true});
+      if(!db.objectStoreNames.contains('meta'))
+        db.createObjectStore('meta',{keyPath:'key'});
+    };
+    req.onsuccess=e=>{DB.instance=e.target.result;ok();};
+    req.onerror=()=>err(req.error);
+  });
+}
+const tx=(store,mode='readonly')=>DB.instance.transaction(store,mode).objectStore(store);
+const dbGet=(store,key)=>new Promise((ok,er)=>{const r=tx(store).get(key);r.onsuccess=()=>ok(r.result);r.onerror=er;});
+const dbPut=(store,val)=>new Promise((ok,er)=>{const r=tx(store,'readwrite').put(val);r.onsuccess=()=>ok(r.result);r.onerror=er;});
+const dbAdd=(store,val)=>new Promise((ok,er)=>{const r=tx(store,'readwrite').add(val);r.onsuccess=()=>ok(r.result);r.onerror=er;});
+const dbAll=(store)=>new Promise((ok,er)=>{const r=tx(store).getAll();r.onsuccess=()=>ok(r.result);r.onerror=er;});
+
+async function ensureDefaults(){
+  const seeded=await dbGet('meta','seeded');
+  if(seeded) return;
+  for(const e of DEFAULT_EMPLOYEES) await dbPut('employees',e);
+  for(const c of DEFAULT_CUSTOMERS) await dbPut('customers',c);
+  for(const l of SAMPLE_LOGS){
+    const{id,...rest}=l;
+    await dbPut('logs',l);
+  }
+  await dbPut('meta',{key:'seeded',val:true});
+}
+
+/* ═══════════════════════════════════════════════════════
+   ④ APP STATE
+═══════════════════════════════════════════════════════ */
+const S={
+  user:null, tab:'new',
+  logs:[], employees:[], customers:[],
+  expandedId:null,
+  newLog:{custName:'',projName:'',visitDate:today(),content:'',status:'완료',nextVisit:'',requests:[]},
+  filter:{cust:'',emp:'',q:''},
+  isRec:false, aiLoading:false, saved:false,
+  modal:null,  // 'settings' | null
+  offline:!navigator.onLine,
+};
+
+function today(){return new Date().toISOString().split('T')[0];}
+const fmt=n=>Number(n).toLocaleString('ko-KR')+'원';
+const fmtDate=s=>s?s.replace(/-/g,'.'):'';
+const statusBadge=s=>({완료:'b-ok',진행중:'b-progress',보류:'b-hold',재방문필요:'b-revisit'}[s]||'b-hold');
+
+async function loadData(){
+  [S.logs,S.employees,S.customers]=await Promise.all([dbAll('logs'),dbAll('employees'),dbAll('customers')]);
+  S.logs.sort((a,b)=>new Date(b.createdAt||b.visitDate)-new Date(a.createdAt||a.visitDate));
+}
+
+/* ═══════════════════════════════════════════════════════
+   ⑤ RENDER ENGINE
+═══════════════════════════════════════════════════════ */
+const root=document.getElementById('app');
+
+function render(){
+  if(!S.user){root.innerHTML=renderLogin();bindLogin();return;}
+  root.innerHTML=`
+    ${S.offline?`<div class="offline-bar">📵 오프라인 모드 — 데이터는 기기에 저장됩니다</div>`:''}
+    ${renderHeader()}
+    <div class="screen" id="screen">
+      ${S.tab==='new'?renderNewLog():S.tab==='my'?renderMyLogs():renderAdmin()}
+    </div>
+    ${renderNav()}
+    ${S.modal?renderModal():''}
+  `;
+  bindMain();
+}
+
+/* ── Login ── */
+function renderLogin(){
+  return`<div class="login">
+    <div class="login-logo">HKC</div>
+    <div class="login-sub">유지보수 작업일지 시스템</div>
+    <div class="login-card">
+      <label class="login-label">사원번호</label>
+      <input id="lid" class="login-input" placeholder="예: E001" autocomplete="username" />
+      <label class="login-label" style="margin-top:12px;display:block">비밀번호</label>
+      <input id="lpw" class="login-input" type="password" placeholder="••••" autocomplete="current-password" />
+      <div id="lerr" class="login-err"></div>
+      <button class="login-btn" id="lbtn">로그인</button>
+    </div>
+    <div class="login-hint">
+      엔지니어: E001~E003 / 1234<br>관리자: A001 / admin
+    </div>
+  </div>`;
+}
+
+/* ── Header ── */
+function renderHeader(){
+  const tabName={new:'새 작업일지',my:'내 기록',admin:'관리자 대시보드'}[S.tab]||'';
+  return`<div class="hdr">
+    <div class="hdr-left">
+      <h1>HKC 유지보수일지</h1>
+      <p>${S.user.name} · ${S.user.role==='admin'?'관리자':'엔지니어'} · ${tabName}</p>
+    </div>
+    <div class="hdr-actions">
+      ${S.user.role==='admin'?`<button class="btn-hdr" id="btn-settings">${I.gear}</button>`:''}
+      <button class="btn-hdr" id="btn-logout">로그아웃</button>
+    </div>
+  </div>`;
+}
+
+/* ── Nav ── */
+function renderNav(){
+  const tabs=[
+    {k:'new',ic:I.pencil,lb:'새 일지'},
+    {k:'my',ic:I.list,lb:'내 기록'},
+    ...(S.user.role==='admin'?[{k:'admin',ic:I.dashboard,lb:'관리자'}]:[]),
+  ];
+  return`<nav class="nav">${tabs.map(t=>`
+    <button class="nav-btn${S.tab===t.k?' active':''}" data-tab="${t.k}">
+      ${t.ic}<span>${t.lb}</span>
+    </button>`).join('')}</nav>`;
+}
+
+/* ── New Log ── */
+function renderNewLog(){
+  const cust=S.customers.find(c=>c.name===S.newLog.custName);
+  const projects=cust?.projects||[];
+  return`
+  <div class="sec-row"><span class="sec-title">작업일지 작성</span></div>
+
+  <div class="card">
+    <div class="fl">고객사</div>
+    <select id="nl-cust" style="margin-bottom:10px">
+      <option value="">선택하세요</option>
+      ${S.customers.map(c=>`<option${S.newLog.custName===c.name?' selected':''}>${c.name}</option>`).join('')}
+    </select>
+    <div class="fl">프로젝트</div>
+    <select id="nl-proj"${!S.newLog.custName?' disabled':''}>
+      <option value="">선택하세요</option>
+      ${projects.map(p=>`<option${S.newLog.projName===p?' selected':''}>${p}</option>`).join('')}
+    </select>
+  </div>
+
+  <div class="card">
+    <div class="card-row two">
+      <div>
+        <div class="fl">방문일자</div>
+        <input id="nl-date" type="date" value="${S.newLog.visitDate}" />
+      </div>
+      <div>
+        <div class="fl">처리결과</div>
+        <select id="nl-status">
+          ${['완료','진행중','보류','재방문필요'].map(s=>`<option${S.newLog.status===s?' selected':''}>${s}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <div class="fl" style="margin:0">작업내용</div>
+      <div style="display:flex;gap:6px">
+        <button class="btn-sm btn-voice${S.isRec?' rec':''}" id="btn-voice">
+          ${S.isRec?I.micOff:I.mic}${S.isRec?'중지':'음성입력'}
+        </button>
+        <button class="btn-sm btn-ai" id="btn-ai"${(!S.newLog.content||S.aiLoading)?' disabled':''}>
+          ${I.wand}${S.aiLoading?'정리중…':'AI 정리'}
+        </button>
+      </div>
+    </div>
+    ${S.isRec?`<div class="rec-bar"><span class="rec-dot"></span>음성 녹음 중… 말씀하세요</div>`:''}
+    <textarea id="nl-content" placeholder="작업 내용을 입력하거나 음성 버튼을 눌러 말씀하세요.&#10;&#10;예) 서버 정기점검, DB 최적화, 오류 수정 등">${S.newLog.content}</textarea>
+  </div>
+
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <div class="fl" style="margin:0">추가 요구사항 / 견적</div>
+      <button class="btn-add" id="btn-add-req">${I.plus} 추가</button>
+    </div>
+    ${S.newLog.requests.length===0?`<p style="font-size:12px;color:#9EA3B5;padding:2px 0">요구사항 없음</p>`:''}
+    ${S.newLog.requests.map((r,i)=>`
+      <div class="req-item">
+        <div class="req-header">
+          <span class="req-label">요구사항 ${i+1}</span>
+          <button class="btn-icon rm-req" data-i="${i}">${I.x}</button>
+        </div>
+        <input class="req-desc" data-i="${i}" value="${r.desc||''}" placeholder="기능 요구사항 내용을 입력하세요" />
+        <input class="req-amt" data-i="${i}" type="number" value="${r.amount||''}" placeholder="견적금액 (원, 선택사항)" />
+        ${r.amount>0?`<p class="req-amount">견적: ${fmt(r.amount)}</p>`:''}
+      </div>`).join('')}
+  </div>
+
+  <div class="card">
+    <div class="fl">다음 방문 예정일 <span style="color:#9EA3B5;font-weight:400">(선택)</span></div>
+    <input id="nl-next" type="date" value="${S.newLog.nextVisit}" />
+  </div>
+
+  <button class="btn-primary${S.saved?' saved':''}" id="btn-save">
+    ${S.saved?I.check:I.save}
+    ${S.saved?'저장되었습니다 ✓':'작업일지 저장'}
+  </button>`;
+}
+
+/* ── My Logs ── */
+function renderMyLogs(){
+  const my=S.logs.filter(l=>l.empId===S.user.id);
+  return`<div class="sec-row">
+    <span class="sec-title">내 작업 기록</span>
+    <span class="sec-count">${my.length}건</span>
+  </div>
+  ${my.length===0?`<div class="empty">${I.empty}<p>작성한 작업일지가 없습니다</p></div>`
+    :my.map(l=>renderLogCard(l,false)).join('')}`;
+}
+
+/* ── Admin ── */
+function renderAdmin(){
+  if(S.user.role!=='admin') return`<div class="empty"><p>관리자 권한이 필요합니다</p></div>`;
+  const custs=[...new Set(S.logs.map(l=>l.custName))];
+  const emps=[...new Set(S.logs.map(l=>l.empName))];
+  const filtered=S.logs.filter(l=>
+    (!S.filter.cust||l.custName===S.filter.cust)&&
+    (!S.filter.emp||l.empName===S.filter.emp)&&
+    (!S.filter.q||[l.content,l.custName,l.projName,l.empName].some(f=>f?.includes(S.filter.q)))
+  );
+  const totalReqs=S.logs.reduce((s,l)=>s+l.requests.length,0);
+  const totalAmt=S.logs.reduce((s,l)=>s+l.requests.reduce((a,r)=>a+(Number(r.amount)||0),0),0);
+  const thisMonth=new Date().toISOString().slice(0,7);
+  return`
+  <div class="sec-row"><span class="sec-title">관리자 대시보드</span></div>
+  <div class="stats-grid">
+    ${[
+      {lb:'전체 작업일지',val:S.logs.length+'건',ic:I.clip},
+      {lb:'이번달 방문',val:S.logs.filter(l=>l.visitDate?.startsWith(thisMonth)).length+'건',ic:I.calendar},
+      {lb:'추가 요구사항',val:totalReqs+'건',ic:I.msg},
+      {lb:'견적 합계',val:totalAmt>0?(totalAmt/10000).toFixed(0)+'만원':'0원',ic:I.won},
+    ].map(s=>`<div class="stat-card">
+      <div class="stat-icon">${s.ic}<span>${s.lb}</span></div>
+      <div class="stat-val">${s.val}</div>
+    </div>`).join('')}
+  </div>
+
+  <div class="card" style="margin-bottom:10px">
+    <div style="position:relative;margin-bottom:8px">
+      <div style="position:absolute;left:10px;top:50%;transform:translateY(-50%);pointer-events:none;color:#9EA3B5">${I.search}</div>
+      <input id="adm-q" value="${S.filter.q}" placeholder="검색 (고객사, 직원, 작업내용)" style="padding-left:34px" />
+    </div>
+    <div class="card-row two">
+      <select id="adm-cust">
+        <option value="">전체 고객사</option>
+        ${custs.map(c=>`<option${S.filter.cust===c?' selected':''}>${c}</option>`).join('')}
+      </select>
+      <select id="adm-emp">
+        <option value="">전체 직원</option>
+        ${emps.map(e=>`<option${S.filter.emp===e?' selected':''}>${e}</option>`).join('')}
+      </select>
+    </div>
+  </div>
+
+  <div class="sec-row" style="margin-bottom:8px">
+    <span style="font-size:12px;color:#9EA3B5">${filtered.length}건 표시</span>
+    <button class="btn-export" id="btn-csv">${I.download}CSV 내보내기</button>
+  </div>
+  ${filtered.length===0?`<div class="empty">${I.empty}<p>해당 조건의 일지가 없습니다</p></div>`
+    :filtered.map(l=>renderLogCard(l,true)).join('')}`;
+}
+
+/* ── Log Card ── */
+function renderLogCard(l,showEmp){
+  const exp=S.expandedId===l.id;
+  return`<div class="log-card" data-id="${l.id}">
+    <div class="log-top">
+      <div class="log-meta">
+        <div class="log-name">
+          <span>${l.custName}</span>
+          <span class="badge ${statusBadge(l.status)}">${l.status}</span>
+          ${l.requests.length>0?`<span class="badge b-req">요구 ${l.requests.length}건</span>`:''}
+        </div>
+        <div class="log-proj">${l.projName}</div>
+        <div class="log-date">${fmtDate(l.visitDate)}${showEmp?' · '+l.empName:''}</div>
+      </div>
+      <div class="log-chevron">${exp?I.chevU:I.chevD}</div>
+    </div>
+    ${exp?`<div class="log-detail">
+      <p class="log-content">${l.content}</p>
+      ${l.requests.map(r=>`<div class="req-item" style="margin-bottom:6px">
+        <p style="font-size:12px;color:#B56D0E;font-weight:500">${r.desc}</p>
+        ${r.amount>0?`<p class="req-amount" style="margin-top:4px">견적: ${fmt(r.amount)}</p>`:''}
+      </div>`).join('')}
+      ${l.nextVisit?`<p style="font-size:11px;color:#9EA3B5;display:flex;align-items:center;gap:4px;margin-top:6px">${I.calendar} 다음 방문: ${fmtDate(l.nextVisit)}</p>`:''}
+    </div>`:''}
+  </div>`;
+}
+
+/* ── Settings Modal ── */
+function renderModal(){
+  return`<div class="modal-backdrop" id="modal-backdrop">
+    <div class="modal-sheet" id="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-title">설정 / 관리</div>
+
+      <div style="margin-bottom:16px">
+        <div class="fl">고객사 관리</div>
+        <div class="chip-list" id="cust-chips">
+          ${S.customers.map(c=>`<span class="chip">${c.name}</span>`).join('')}
+        </div>
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <input id="new-cust-name" placeholder="새 고객사명" style="flex:1" />
+          <button class="btn-sm btn-ai" id="btn-add-cust">${I.plus} 추가</button>
+        </div>
+      </div>
+
+      <div style="margin-bottom:16px">
+        <div class="fl">직원 현황</div>
+        ${S.employees.map(e=>`<div class="settings-item">
+          <span class="settings-label">${e.name} <span class="badge ${e.role==='admin'?'b-progress':'b-ok'}">${e.role==='admin'?'관리자':'엔지니어'}</span></span>
+          <span class="settings-val">${e.id}</span>
+        </div>`).join('')}
+      </div>
+
+      <button class="btn-primary" id="btn-close-modal" style="margin-top:4px">닫기</button>
+    </div>
+  </div>`;
+}
+
+/* ═══════════════════════════════════════════════════════
+   ⑥ EVENT BINDING
+═══════════════════════════════════════════════════════ */
+let recObj=null;
+
+function bindLogin(){
+  const doLogin=()=>{
+    const id=document.getElementById('lid')?.value.trim()||'';
+    const pw=document.getElementById('lpw')?.value||'';
+    const emp=S.employees.find(e=>e.id===id&&e.pw===pw);
+    const err=document.getElementById('lerr');
+    if(emp){S.user=emp;render();}
+    else if(err) err.textContent='아이디 또는 비밀번호가 올바르지 않습니다.';
+  };
+  document.getElementById('lbtn')?.addEventListener('click',doLogin);
+  document.getElementById('lpw')?.addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+}
+
+function bindMain(){
+  /* header */
+  document.getElementById('btn-logout')?.addEventListener('click',()=>{
+    S.user=null;S.tab='new';render();
+  });
+  document.getElementById('btn-settings')?.addEventListener('click',()=>{
+    S.modal='settings';render();
+  });
+
+  /* nav */
+  document.querySelectorAll('.nav-btn').forEach(b=>b.addEventListener('click',()=>{
+    S.tab=b.dataset.tab;render();
+  }));
+
+  /* log cards */
+  document.querySelectorAll('.log-card').forEach(c=>c.addEventListener('click',()=>{
+    const id=Number(c.dataset.id);
+    S.expandedId=S.expandedId===id?null:id;render();
+  }));
+
+  /* new log */
+  if(S.tab==='new') bindNewLog();
+
+  /* admin */
+  if(S.tab==='admin') bindAdmin();
+
+  /* modal */
+  if(S.modal) bindModal();
+}
+
+function bindNewLog(){
+  const nl=S.newLog;
+  document.getElementById('nl-cust')?.addEventListener('change',e=>{nl.custName=e.target.value;nl.projName='';render();});
+  document.getElementById('nl-proj')?.addEventListener('change',e=>{nl.projName=e.target.value;});
+  document.getElementById('nl-date')?.addEventListener('change',e=>{nl.visitDate=e.target.value;});
+  document.getElementById('nl-status')?.addEventListener('change',e=>{nl.status=e.target.value;});
+  document.getElementById('nl-content')?.addEventListener('input',e=>{nl.content=e.target.value;});
+  document.getElementById('nl-next')?.addEventListener('change',e=>{nl.nextVisit=e.target.value;});
+
+  document.getElementById('btn-add-req')?.addEventListener('click',()=>{
+    nl.requests.push({desc:'',amount:null});render();
+  });
+  document.querySelectorAll('.rm-req').forEach(b=>b.addEventListener('click',e=>{
+    e.stopPropagation();nl.requests.splice(Number(b.dataset.i),1);render();
+  }));
+  document.querySelectorAll('.req-desc').forEach(inp=>inp.addEventListener('input',e=>{
+    nl.requests[Number(inp.dataset.i)].desc=e.target.value;
+  }));
+  document.querySelectorAll('.req-amt').forEach(inp=>inp.addEventListener('input',e=>{
+    const v=Number(e.target.value);
+    nl.requests[Number(inp.dataset.i)].amount=v||null;render();
+  }));
+
+  /* voice */
+  document.getElementById('btn-voice')?.addEventListener('click',()=>{
+    const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+    if(!SR){showToast('⚠️ Chrome/Edge 브라우저에서만 음성인식이 작동합니다');return;}
+    if(S.isRec){recObj?.stop();S.isRec=false;render();return;}
+    recObj=new SR();recObj.lang='ko-KR';recObj.continuous=true;recObj.interimResults=false;
+    recObj.onresult=e=>{
+      const t=Array.from(e.results).map(r=>r[0].transcript).join(' ');
+      nl.content=(nl.content?nl.content+' ':'')+t;render();
+    };
+    recObj.onend=()=>{S.isRec=false;render();};
+    recObj.onerror=()=>{S.isRec=false;showToast('음성인식 오류가 발생했습니다');render();};
+    recObj.start();S.isRec=true;render();
+  });
+
+  /* AI structure */
+  document.getElementById('btn-ai')?.addEventListener('click',async()=>{
+    if(!nl.content||S.aiLoading) return;
+    if(!navigator.onLine){showToast('⚠️ AI 정리는 인터넷 연결이 필요합니다');return;}
+    S.aiLoading=true;render();
+    try{
+      const res=await fetch('https://api.anthropic.com/v1/messages',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({
+          model:'claude-sonnet-4-20250514',
+          max_tokens:1000,
+          system:`당신은 IT 유지보수 업무보고서 전문가입니다. 
+현장 직원의 음성 메모나 간단한 메모를 전문적인 업무일지 문장으로 정리해주세요.
+반드시 다음 JSON 형식만 반환하세요 (마크다운, 코드블록 없이):
+{"content":"정리된 작업내용(2~4문장, 전문적이고 명확하게)","requests":[{"desc":"기능요구사항 설명","amount":금액숫자또는null}]}
+요구사항이 없으면 requests는 빈 배열. 금액 언급 없으면 amount는 null.`,
+          messages:[{role:'user',content:`다음 내용을 업무일지 형식으로 정리해주세요:\n\n${nl.content}`}]
+        })
+      });
+      const data=await res.json();
+      const raw=data.content?.[0]?.text||'';
+      const clean=raw.replace(/```json|```/g,'').trim();
+      const parsed=JSON.parse(clean);
+      if(parsed.content) nl.content=parsed.content;
+      if(parsed.requests?.length) nl.requests=[...nl.requests,...parsed.requests.filter(r=>r.desc)];
+      showToast('✨ AI 정리 완료');
+    }catch(e){
+      console.error(e);
+      showToast('AI 정리 중 오류가 발생했습니다');
+    }
+    S.aiLoading=false;render();
+  });
+
+  /* save */
+  document.getElementById('btn-save')?.addEventListener('click',async()=>{
+    if(!nl.custName||!nl.projName||!nl.content){
+      showToast('⚠️ 고객사, 프로젝트, 작업내용은 필수입니다');return;
+    }
+    const log={
+      ...nl,
+      empId:S.user.id,
+      empName:S.user.name,
+      createdAt:new Date().toISOString(),
+    };
+    const id=await dbAdd('logs',log);
+    S.logs.unshift({...log,id});
+    S.newLog={custName:'',projName:'',visitDate:today(),content:'',status:'완료',nextVisit:'',requests:[]};
+    S.saved=true;render();
+    setTimeout(()=>{S.saved=false;render();},2400);
+    showToast('✅ 작업일지가 저장되었습니다');
+  });
+}
+
+function bindAdmin(){
+  document.getElementById('adm-q')?.addEventListener('input',e=>{S.filter.q=e.target.value;render();});
+  document.getElementById('adm-cust')?.addEventListener('change',e=>{S.filter.cust=e.target.value;render();});
+  document.getElementById('adm-emp')?.addEventListener('change',e=>{S.filter.emp=e.target.value;render();});
+  document.getElementById('btn-csv')?.addEventListener('click',exportCSV);
+}
+
+function bindModal(){
+  document.getElementById('modal-backdrop')?.addEventListener('click',e=>{
+    if(e.target.id==='modal-backdrop'){S.modal=null;render();}
+  });
+  document.getElementById('btn-close-modal')?.addEventListener('click',()=>{S.modal=null;render();});
+  document.getElementById('btn-add-cust')?.addEventListener('click',async()=>{
+    const inp=document.getElementById('new-cust-name');
+    const name=(inp?.value||'').trim();
+    if(!name){showToast('⚠️ 고객사명을 입력하세요');return;}
+    if(S.customers.find(c=>c.name===name)){showToast('이미 등록된 고객사입니다');return;}
+    const id=await dbAdd('customers',{name,projects:[]});
+    S.customers.push({id,name,projects:[]});
+    showToast(`✅ ${name} 추가됨`);render();
+  });
+}
+
+/* ═══════════════════════════════════════════════════════
+   ⑦ CSV EXPORT
+═══════════════════════════════════════════════════════ */
+function exportCSV(){
+  const filtered=S.logs.filter(l=>
+    (!S.filter.cust||l.custName===S.filter.cust)&&
+    (!S.filter.emp||l.empName===S.filter.emp)&&
+    (!S.filter.q||[l.content,l.custName,l.projName,l.empName].some(f=>f?.includes(S.filter.q)))
+  );
+  const BOM='\uFEFF';
+  const header='ID,방문일자,직원,고객사,프로젝트,처리결과,작업내용,요구사항수,견적합계,다음방문,작성시각';
+  const rows=filtered.map(l=>{
+    const reqTotal=l.requests.reduce((s,r)=>s+(Number(r.amount)||0),0);
+    const reqDescs=l.requests.map(r=>r.desc).join('|');
+    const esc=v=>`"${String(v||'').replace(/"/g,'""')}"`;
+    return[l.id,l.visitDate,l.empName,l.custName,l.projName,l.status,esc(l.content),l.requests.length,reqTotal,l.nextVisit||'',l.createdAt||''].join(',');
+  });
+  const csv=BOM+header+'\n'+rows.join('\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download=`HKC_유지보수일지_${today()}.csv`;
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast('📥 CSV 파일이 다운로드됩니다');
+}
+
+/* ═══════════════════════════════════════════════════════
+   ⑧ TOAST
+═══════════════════════════════════════════════════════ */
+function showToast(msg){
+  const old=document.querySelector('.toast');
+  if(old) old.remove();
+  const t=document.createElement('div');
+  t.className='toast';t.textContent=msg;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(),2600);
+}
+
+/* ═══════════════════════════════════════════════════════
+   ⑨ SERVICE WORKER & MANIFEST (GitHub Pages용)
+═══════════════════════════════════════════════════════ */
+function setupPWA(){
+  /* Manifest (blob URL — 최신 브라우저 지원) */
+  const icon=`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%231B2A3B'/><text y='.9em' font-size='72' x='50%' text-anchor='middle' dominant-baseline='hanging' fill='%23E8911A' font-family='sans-serif' font-weight='700'>H</text></svg>`;
+  const iconUrl=`data:image/svg+xml,${icon}`;
+  const manifest={
+    name:'HKC 유지보수일지',
+    short_name:'HKC일지',
+    description:'한국클라우드 유지보수 작업일지 시스템',
+    start_url:'.',
+    display:'standalone',
+    background_color:'#1B2A3B',
+    theme_color:'#1B2A3B',
+    orientation:'portrait',
+    icons:[
+      {src:iconUrl,sizes:'192x192',type:'image/svg+xml'},
+      {src:iconUrl,sizes:'512x512',type:'image/svg+xml',purpose:'any maskable'},
+    ]
+  };
+  const mblob=new Blob([JSON.stringify(manifest)],{type:'application/manifest+json'});
+  const murl=URL.createObjectURL(mblob);
+  const link=document.createElement('link');
+  link.rel='manifest';link.href=murl;
+  document.head.appendChild(link);
+
+  /* Service Worker (HTTPS/localhost 환경에서만 활성화) */
+  if('serviceWorker' in navigator && location.protocol!=='file:'){
+    const swCode=`
+const CACHE='hkc-v2';
+const ASSETS=['/'];
+self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS))));
+self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k))))));
+self.addEventListener('fetch',e=>{
+  if(e.request.url.includes('api.anthropic.com')) return;
+  e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).then(resp=>{
+    if(resp.ok){const c=resp.clone();caches.open(CACHE).then(cache=>cache.put(e.request,c));}
+    return resp;
+  }).catch(()=>caches.match('/'))));
+});`;
+    const swBlob=new Blob([swCode],{type:'application/javascript'});
+    const swUrl=URL.createObjectURL(swBlob);
+    navigator.serviceWorker.register(swUrl).catch(()=>{});
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+   ⑩ OFFLINE DETECTION
+═══════════════════════════════════════════════════════ */
+window.addEventListener('online',()=>{S.offline=false;render();});
+window.addEventListener('offline',()=>{S.offline=true;render();});
+
+/* ═══════════════════════════════════════════════════════
+   ⑪ INIT
+═══════════════════════════════════════════════════════ */
+(async()=>{
+  setupPWA();
+  await openDB();
+  await ensureDefaults();
+  await loadData();
+  render();
+})();
+</script>
+
+
+</body></html>
