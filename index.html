@@ -1,5 +1,5 @@
 .<!DOCTYPE html>
-<!-- saved from url=(0113)file:///D:/%EB%8B%A4%EC%9A%B4%EB%A1%9C%EB%93%9C/HKC_%EC%9C%A0%EC%A7%80%EB%B3%B4%EC%88%98%EC%9D%BC%EC%A7%80_1.html -->
+<!-- saved from url=(0113)file:///D:/%EB%8B%A4%EC%9A%B4%EB%A1%9C%EB%93%9C/HKC_%EC%9C%A0%EC%A7%80%EB%B3%B4%EC%88%98%EC%9D%BC%EC%A7%80_2.html -->
 <html lang="ko"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
@@ -242,7 +242,7 @@ input[list]{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3
 .csv-modal-btn{width:100%;background:linear-gradient(135deg,#E8911A,#F0A832);border:none;border-radius:12px;padding:14px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 14px rgba(232,145,26,.35)}
 .csv-modal-btn:active{opacity:.88}
 </style>
-<link rel="manifest" href="blob:null/e18bde36-7fc2-4882-ad65-fd8bbb2c0f41"></head>
+<link rel="manifest" href="blob:null/23910db5-ce67-4e82-be4f-d12150b3ebba"></head>
 <body>
 <div id="app"><div class="login">
 
@@ -337,7 +337,7 @@ const SAMPLE_LOGS=[
    ③ SUPABASE 설정 ★ 여기에 본인 키를 입력하세요 ★
 ═══════════════════════════════════════════════════════ */
 const SUPABASE_URL = 'https://fnsshneehtsjvulkwhvj.supabase.co';
-const SUPABASE_KEY = ' eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZuc3NobmVlaHRzanZ1bGt3aHZqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNzQ5MjEsImV4cCI6MjA5NDk1MDkyMX0.64zonIneAyi2snNGaK3N4eoEF29THv6OdJZiMH1aDhM';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZuc3NobmVlaHRzanZ1bGt3aHZqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNzQ5MjEsImV4cCI6MjA5NDk1MDkyMX0.64zonIneAyi2snNGaK3N4eoEF29THv6OdJZiMH1aDhM';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 /* ── DB ↔ JS 필드명 변환 헬퍼 ─────────────────────────── */
@@ -719,13 +719,24 @@ function renderModal(){
 let recObj=null;
 
 function bindLogin(){
-  const doLogin=()=>{
+  const doLogin=async()=>{
     const id=document.getElementById('lid')?.value.trim()||'';
     const pw=document.getElementById('lpw')?.value||'';
-    const emp=S.employees.find(e=>e.id===id&&e.pw===pw);
     const errEl=document.getElementById('lerr');
-    if(emp){S.user=emp;S.showPw=false;render();}
-    else if(errEl) errEl.textContent='아이디 또는 비밀번호가 올바르지 않습니다.';
+    if(!id||!pw){if(errEl)errEl.textContent='사원번호와 비밀번호를 입력하세요.';return;}
+    if(errEl)errEl.textContent='확인 중...';
+    /* 1차: 캐시된 직원 목록에서 확인 */
+    let emp=S.employees.find(e=>e.id===id&&e.pw===pw);
+    /* 2차: 캐시 없으면 Supabase 직접 조회 */
+    if(!emp){
+      try{
+        const{data,error}=await sb.from('hkc_employees')
+          .select('*').eq('id',id).eq('pw',pw).single();
+        if(!error&&data) emp=data;
+      }catch(e){console.error('로그인 조회 오류:',e);}
+    }
+    if(emp){S.user=emp;S.showPw=false;await loadData();render();}
+    else if(errEl)errEl.textContent='아이디 또는 비밀번호가 올바르지 않습니다.';
   };
   document.getElementById('lbtn')?.addEventListener('click',doLogin);
   document.getElementById('lpw')?.addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
