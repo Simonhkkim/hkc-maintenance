@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0113)file:///D:/%EB%8B%A4%EC%9A%B4%EB%A1%9C%EB%93%9C/HKC_%EC%9C%A0%EC%A7%80%EB%B3%B4%EC%88%98%EC%9D%BC%EC%A7%80_9.html -->
+<!-- saved from url=(0114)file:///D:/%EB%8B%A4%EC%9A%B4%EB%A1%9C%EB%93%9C/HKC_%EC%9C%A0%EC%A7%80%EB%B3%B4%EC%88%98%EC%9D%BC%EC%A7%80_10.html -->
 <html lang="ko"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
@@ -289,7 +289,7 @@ input[list]{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3
 .csv-modal-btn{width:100%;background:linear-gradient(135deg,#E8911A,#F0A832);border:none;border-radius:12px;padding:14px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 14px rgba(232,145,26,.35)}
 .csv-modal-btn:active{opacity:.88}
 </style>
-<link rel="manifest" href="blob:null/b53c19bd-de68-4355-902f-f228f1d6e3ce"></head>
+<link rel="manifest" href="blob:null/f8bde2bb-d5d4-4fd0-aefd-73d940817857"></head>
 <body>
 <div id="app"><div class="login">
     <div class="login-top">
@@ -1101,7 +1101,10 @@ function bindAdmin(){
 
 function bindModal(){
   document.getElementById('modal-backdrop')?.addEventListener('click',e=>{if(e.target.id==='modal-backdrop'){S.modal=null;render();}});
-  document.getElementById('btn-close-modal')?.addEventListener('click',()=>{S.modal=null;render();});
+  document.getElementById('btn-close-modal')?.addEventListener('click',async()=>{
+    S.modal=null;S.editEmpId=null;
+    await loadData();render();
+  });
   /* 탭 전환 */
   document.querySelectorAll('.modal-tab').forEach(b=>b.addEventListener('click',()=>{
     S.modalTab=b.dataset.mtab;render();
@@ -1118,16 +1121,16 @@ function bindModal(){
     }catch(e){showToast('⚠️ 추가 실패: '+e.message);}
   }));
   /* 고객사 삭제 */
-  document.querySelectorAll('.del-cust').forEach(b=>b.addEventListener('click',async()=>{
+  document.querySelectorAll('.del-cust').forEach(b=>b.addEventListener('click',busy(async()=>{
     const id=Number(b.dataset.id);
     const cust=S.customers.find(c=>c.id===id);
-    if(!cust||!confirm(`"${cust.name}" 고객사를 삭제할까요?`)) return;
+    if(!cust||!confirm('"'+cust.name+'" 고객사를 삭제할까요?')) return;
     try{
       await sbDelete('hkc_customers','id=eq.'+id);
       showToast('🗑️ '+cust.name+' 삭제됨');
       await loadData();render();
     }catch(e){showToast('⚠️ 삭제 실패: '+e.message);}
-  }));
+  })));
   /* 직원 추가 */
   document.getElementById('btn-add-emp')?.addEventListener('click',busy(async()=>{
     const id=(document.getElementById('new-emp-id')?.value||'').trim().toUpperCase();
@@ -1143,7 +1146,7 @@ function bindModal(){
     }catch(e){showToast('⚠️ 추가 실패: '+e.message);}
   }));
   /* 직원 삭제 */
-  document.querySelectorAll('.del-emp').forEach(b=>b.addEventListener('click',async()=>{
+  document.querySelectorAll('.del-emp').forEach(b=>b.addEventListener('click',busy(async()=>{
     const id=b.dataset.id;
     const emp=S.employees.find(e=>e.id===id);
     if(!emp||!confirm('"'+emp.name+'" 직원을 삭제할까요?')) return;
@@ -1152,14 +1155,15 @@ function bindModal(){
       showToast('🗑️ '+emp.name+' 삭제됨');
       await loadData();render();
     }catch(e){showToast('⚠️ 삭제 실패: '+e.message);}
-  }));
+  })));
   /* 직원 편집 토글 */
   document.querySelectorAll('.edit-emp').forEach(b=>b.addEventListener('click',()=>{
     const id=b.dataset.id;
-    S.editEmpId=S.editEmpId===id?null:id;render();
+    S.editEmpId=S.editEmpId===id?null:id;
+    render();
   }));
   /* 직원 편집 저장 */
-  document.querySelectorAll('.save-emp-edit').forEach(b=>b.addEventListener('click',async()=>{
+  document.querySelectorAll('.save-emp-edit').forEach(b=>b.addEventListener('click',busy(async()=>{
     const id=b.dataset.id;
     const name=(document.getElementById('edit-emp-name')?.value||'').trim();
     const role=document.getElementById('edit-emp-role')?.value||'engineer';
@@ -1169,11 +1173,16 @@ function bindModal(){
     if(pw) body.pw=pw;
     try{
       await sbPatch('hkc_employees','id=eq.'+id,body);
+      /* 현재 로그인 계정 본인 수정 시 헤더도 즉시 업데이트 */
+      if(S.user&&S.user.id===id){S.user.name=name;S.user.role=role;}
       S.editEmpId=null;
       showToast('✅ '+name+' 정보 수정됨');
       await loadData();render();
-    }catch(e){showToast('⚠️ 수정 실패: '+e.message);}
-  }));
+    }catch(e){
+      console.error('편집 오류:',e);
+      showToast('⚠️ 수정 실패: '+e.message);
+    }
+  })));
   /* 작업종류 추가 */
   document.getElementById('btn-add-wt')?.addEventListener('click',busy(async()=>{
     const name=(document.getElementById('new-wt-name')?.value||'').trim();
@@ -1186,7 +1195,7 @@ function bindModal(){
     }catch(e){showToast('⚠️ 추가 실패: '+e.message);}
   }));
   /* 작업종류 삭제 */
-  document.querySelectorAll('.del-wt').forEach(b=>b.addEventListener('click',async()=>{
+  document.querySelectorAll('.del-wt').forEach(b=>b.addEventListener('click',busy(async()=>{
     const id=Number(b.dataset.id);
     const wt=S.workTypes.find(t=>t.id===id);
     if(!wt||!confirm('"'+wt.name+'" 작업종류를 삭제할까요?')) return;
@@ -1195,7 +1204,7 @@ function bindModal(){
       showToast('🗑️ '+wt.name+' 삭제됨');
       await loadData();render();
     }catch(e){showToast('⚠️ 삭제 실패: '+e.message);}
-  }));
+  })));
 }
 
 /* ═══════════════════════════════════════════════════════
