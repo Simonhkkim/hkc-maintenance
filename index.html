@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0113)file:///D:/%EB%8B%A4%EC%9A%B4%EB%A1%9C%EB%93%9C/HKC_%EC%9C%A0%EC%A7%80%EB%B3%B4%EC%88%98%EC%9D%BC%EC%A7%80_8.html -->
+<!-- saved from url=(0113)file:///D:/%EB%8B%A4%EC%9A%B4%EB%A1%9C%EB%93%9C/HKC_%EC%9C%A0%EC%A7%80%EB%B3%B4%EC%88%98%EC%9D%BC%EC%A7%80_9.html -->
 <html lang="ko"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
@@ -289,7 +289,7 @@ input[list]{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3
 .csv-modal-btn{width:100%;background:linear-gradient(135deg,#E8911A,#F0A832);border:none;border-radius:12px;padding:14px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 14px rgba(232,145,26,.35)}
 .csv-modal-btn:active{opacity:.88}
 </style>
-<link rel="manifest" href="blob:null/fef165ae-c4ac-4db1-892d-7d1e0e33fea8"></head>
+<link rel="manifest" href="blob:null/b53c19bd-de68-4355-902f-f228f1d6e3ce"></head>
 <body>
 <div id="app"><div class="login">
     <div class="login-top">
@@ -953,6 +953,8 @@ function renderModal(){
    ⑥ EVENT BINDING
 ═══════════════════════════════════════════════════════ */
 let recObj=null;
+let _busy=false;  // 중복 제출 방지
+const busy=fn=>async(...a)=>{if(_busy)return;_busy=true;try{await fn(...a)}finally{_busy=false;}};
 
 function bindLogin(){
   const doLogin=async()=>{
@@ -1105,33 +1107,29 @@ function bindModal(){
     S.modalTab=b.dataset.mtab;render();
   }));
   /* 고객사 추가 */
-  document.getElementById('btn-add-cust')?.addEventListener('click',async()=>{
+  document.getElementById('btn-add-cust')?.addEventListener('click',busy(async()=>{
     const name=(document.getElementById('new-cust-name')?.value||'').trim();
     if(!name){showToast('⚠️ 고객사명을 입력하세요');return;}
     if(S.customers.find(c=>c.name===name)){showToast('이미 등록된 고객사입니다');return;}
     try{
-      const rows=await sbPost('hkc_customers',{name,projects:[]});
-      const saved=Array.isArray(rows)?rows[0]:rows;
-      S.customers.push(toCust(saved));
-      showToast('✅ '+name+' 추가됨');render();
+      await sbPost('hkc_customers',{name,projects:[]});
+      showToast('✅ '+name+' 추가됨');
+      await loadData();render();
     }catch(e){showToast('⚠️ 추가 실패: '+e.message);}
-  });
+  }));
   /* 고객사 삭제 */
   document.querySelectorAll('.del-cust').forEach(b=>b.addEventListener('click',async()=>{
     const id=Number(b.dataset.id);
     const cust=S.customers.find(c=>c.id===id);
     if(!cust||!confirm(`"${cust.name}" 고객사를 삭제할까요?`)) return;
     try{
-      await fetch(`${CFG.url}/rest/v1/hkc_customers?id=eq.${id}`,{
-        method:'DELETE',
-        headers:{'apikey':CFG.key,'Authorization':'Bearer '+CFG.key}
-      });
-      S.customers=S.customers.filter(c=>c.id!==id);
-      showToast('🗑️ '+cust.name+' 삭제됨');render();
+      await sbDelete('hkc_customers','id=eq.'+id);
+      showToast('🗑️ '+cust.name+' 삭제됨');
+      await loadData();render();
     }catch(e){showToast('⚠️ 삭제 실패: '+e.message);}
   }));
   /* 직원 추가 */
-  document.getElementById('btn-add-emp')?.addEventListener('click',async()=>{
+  document.getElementById('btn-add-emp')?.addEventListener('click',busy(async()=>{
     const id=(document.getElementById('new-emp-id')?.value||'').trim().toUpperCase();
     const name=(document.getElementById('new-emp-name')?.value||'').trim();
     const role=document.getElementById('new-emp-role')?.value||'engineer';
@@ -1139,12 +1137,11 @@ function bindModal(){
     if(!id||!name||!pw){showToast('⚠️ 사번, 이름, 비밀번호를 모두 입력하세요');return;}
     if(S.employees.find(e=>e.id===id)){showToast('⚠️ 이미 존재하는 사번입니다');return;}
     try{
-      const rows=await sbPost('hkc_employees',{id,name,role,pw});
-      const saved=Array.isArray(rows)?rows[0]:rows;
-      S.employees.push(saved);
-      showToast('✅ '+name+' 직원 추가됨');render();
+      await sbPost('hkc_employees',{id,name,role,pw});
+      showToast('✅ '+name+' 직원 추가됨');
+      await loadData();render();
     }catch(e){showToast('⚠️ 추가 실패: '+e.message);}
-  });
+  }));
   /* 직원 삭제 */
   document.querySelectorAll('.del-emp').forEach(b=>b.addEventListener('click',async()=>{
     const id=b.dataset.id;
@@ -1152,8 +1149,8 @@ function bindModal(){
     if(!emp||!confirm('"'+emp.name+'" 직원을 삭제할까요?')) return;
     try{
       await sbDelete('hkc_employees','id=eq.'+id);
-      S.employees=S.employees.filter(e=>e.id!==id);
-      showToast('🗑️ '+emp.name+' 삭제됨');render();
+      showToast('🗑️ '+emp.name+' 삭제됨');
+      await loadData();render();
     }catch(e){showToast('⚠️ 삭제 실패: '+e.message);}
   }));
   /* 직원 편집 토글 */
@@ -1172,24 +1169,22 @@ function bindModal(){
     if(pw) body.pw=pw;
     try{
       await sbPatch('hkc_employees','id=eq.'+id,body);
-      const emp=S.employees.find(e=>e.id===id);
-      if(emp){emp.name=name;emp.role=role;if(pw)emp.pw=pw;}
       S.editEmpId=null;
-      showToast('✅ '+name+' 정보 수정됨');render();
+      showToast('✅ '+name+' 정보 수정됨');
+      await loadData();render();
     }catch(e){showToast('⚠️ 수정 실패: '+e.message);}
   }));
   /* 작업종류 추가 */
-  document.getElementById('btn-add-wt')?.addEventListener('click',async()=>{
+  document.getElementById('btn-add-wt')?.addEventListener('click',busy(async()=>{
     const name=(document.getElementById('new-wt-name')?.value||'').trim();
     if(!name){showToast('⚠️ 작업종류명을 입력하세요');return;}
     if(S.workTypes.find(t=>t.name===name)){showToast('이미 존재하는 작업종류입니다');return;}
     try{
-      const rows=await sbPost('hkc_work_types',{name});
-      const saved=Array.isArray(rows)?rows[0]:rows;
-      S.workTypes.push(saved);
-      showToast('✅ '+name+' 추가됨');render();
+      await sbPost('hkc_work_types',{name});
+      showToast('✅ '+name+' 추가됨');
+      await loadData();render();
     }catch(e){showToast('⚠️ 추가 실패: '+e.message);}
-  });
+  }));
   /* 작업종류 삭제 */
   document.querySelectorAll('.del-wt').forEach(b=>b.addEventListener('click',async()=>{
     const id=Number(b.dataset.id);
@@ -1197,8 +1192,8 @@ function bindModal(){
     if(!wt||!confirm('"'+wt.name+'" 작업종류를 삭제할까요?')) return;
     try{
       await sbDelete('hkc_work_types','id=eq.'+id);
-      S.workTypes=S.workTypes.filter(t=>t.id!==id);
-      showToast('🗑️ '+wt.name+' 삭제됨');render();
+      showToast('🗑️ '+wt.name+' 삭제됨');
+      await loadData();render();
     }catch(e){showToast('⚠️ 삭제 실패: '+e.message);}
   }));
 }
@@ -1264,4 +1259,4 @@ window.addEventListener('offline',()=>{S.offline=true;render();});
 </script>
 
 
-</body></html>.
+</body></html>
