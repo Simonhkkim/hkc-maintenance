@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0113)file:///D:/%EB%8B%A4%EC%9A%B4%EB%A1%9C%EB%93%9C/HKC_%EC%9C%A0%EC%A7%80%EB%B3%B4%EC%88%98%EC%9D%BC%EC%A7%80_4.html -->
+<!-- saved from url=(0113)file:///D:/%EB%8B%A4%EC%9A%B4%EB%A1%9C%EB%93%9C/HKC_%EC%9C%A0%EC%A7%80%EB%B3%B4%EC%88%98%EC%9D%BC%EC%A7%80_5.html -->
 <html lang="ko"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
@@ -9,8 +9,6 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="한국클라우드">
 <title>한국클라우드 유지보수일지</title>
-<!-- Supabase JS Client -->
-<script src="./한국클라우드 유지보수일지_files/supabase.js.다운로드"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;overflow:hidden;background:#E8EEF8}
@@ -215,6 +213,36 @@ input[list]{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3
 @keyframes fiu{from{opacity:0;transform:translateX(-50%) translateY(8px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
 @keyframes fout{to{opacity:0}}
 
+/* ── 관리 모달 탭 ── */
+.modal-tabs{display:flex;gap:0;margin-bottom:16px;background:#F0F2F5;border-radius:10px;padding:3px}
+.modal-tab{flex:1;text-align:center;padding:8px;border:none;background:none;border-radius:8px;font-size:13px;font-weight:500;color:#6B7280;cursor:pointer;font-family:inherit;transition:all .15s}
+.modal-tab.active{background:#fff;color:#1D3557;box-shadow:0 1px 4px rgba(0,0,0,.1)}
+/* ── 관리 항목 ── */
+.mgmt-item{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:#F8F9FC;border-radius:8px;margin-bottom:6px}
+.mgmt-item-left{display:flex;flex-direction:column;gap:2px}
+.mgmt-item-name{font-size:13px;font-weight:500;color:#1A1A2E}
+.mgmt-item-sub{font-size:11px;color:#9EA3B5}
+.btn-del{background:#FFEBEE;border:none;border-radius:6px;padding:5px 10px;color:#D32F2F;font-size:11px;cursor:pointer;font-family:inherit;white-space:nowrap}
+.btn-del:active{background:#FFCDD2}
+/* ── 추가 폼 ── */
+.add-form{background:#F0F7FF;border-radius:10px;padding:12px;margin-top:10px}
+.add-form-title{font-size:11px;font-weight:600;color:#1D3557;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.3px}
+.add-form input,.add-form select{margin-bottom:7px;font-size:13px}
+.add-form input:last-of-type,.add-form select:last-of-type{margin-bottom:0}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:7px}
+/* ── 고객사 검색 선택 ── */
+.cust-search-wrap{position:relative;margin-bottom:8px}
+.cust-search-wrap input{padding-left:32px}
+.cust-search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);pointer-events:none;color:#9EA3B5}
+.cust-search-icon svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2}
+.cust-select-list{max-height:180px;overflow-y:auto;border:1px solid #E5E7EB;border-radius:8px;background:#fff}
+.cust-select-item{padding:10px 12px;cursor:pointer;font-size:13px;color:#374151;border-bottom:1px solid #F3F4F6;display:flex;align-items:center;justify-content:space-between}
+.cust-select-item:last-child{border-bottom:none}
+.cust-select-item:hover,.cust-select-item.chosen{background:#FEF3E2;color:#B56D0E;font-weight:500}
+.cust-select-item .item-check{font-size:14px;color:#E8911A}
+.cust-selected-badge{display:inline-flex;align-items:center;gap:6px;background:#FEF3E2;color:#B56D0E;border-radius:8px;padding:6px 10px;font-size:13px;font-weight:500;margin-bottom:8px}
+.cust-selected-badge button{background:none;border:none;color:#B56D0E;cursor:pointer;padding:0;font-size:14px;line-height:1}
+
 /* ── Settings modal ── */
 .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;display:flex;flex-direction:column;justify-content:flex-end}
 .modal-sheet{background:#fff;border-radius:20px 20px 0 0;padding:20px 16px;padding-bottom:max(20px,env(safe-area-inset-bottom));max-height:75vh;overflow-y:auto}
@@ -242,40 +270,28 @@ input[list]{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3
 .csv-modal-btn{width:100%;background:linear-gradient(135deg,#E8911A,#F0A832);border:none;border-radius:12px;padding:14px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 14px rgba(232,145,26,.35)}
 .csv-modal-btn:active{opacity:.88}
 </style>
-<link rel="manifest" href="blob:null/9c15bad6-1ecb-4379-b6d9-360618b0c552"></head>
+<link rel="manifest" href="blob:null/f565a73c-47ed-4bae-b8a7-16ed8b91f30f"></head>
 <body>
 <div id="app"><div class="login">
-
-    <!-- 상단: 네이비 브랜드 영역 -->
     <div class="login-top">
       <div class="login-ko"><span>한국</span>클라우드</div>
       <div class="login-accent"></div>
       <div class="login-en-row">
-        <span class="login-en">HANKOOK CLOUD</span>
-        <span class="login-dot"></span>
-        <span class="login-tagline">유지보수 작업일지</span>
+        <span class="login-en">SUPABASE 초기 설정</span>
       </div>
     </div>
-
-    <!-- 하단: 로그인 카드 -->
     <div class="login-bottom">
       <div class="login-card">
-        <label class="login-label">사원번호 / 관리자 ID</label>
-        <input id="lid" class="login-id-input" placeholder="예: E001, A001" autocomplete="username">
-
-        <label class="login-label">비밀번호</label>
-        <div class="pw-wrap">
-          <input id="lpw" class="login-pw-input" type="password" placeholder="비밀번호를 입력하세요" autocomplete="current-password">
-          <button class="pw-eye" id="pw-toggle" type="button"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg></button>
-        </div>
-
-        <div id="lerr" class="login-err"></div>
-        <button class="login-btn" id="lbtn">로그인<span class="login-btn-accent">→</span></button>
+        <label class="login-label">Supabase Project URL</label>
+        <input id="cfg-url" class="login-id-input" placeholder="https://xxxx.supabase.co" style="font-size:13px;font-weight:400" autocomplete="off">
+        <label class="login-label">Supabase API Key (anon)</label>
+        <input id="cfg-key" class="login-id-input" placeholder="eyJhbGc..." style="font-size:13px;font-weight:400" autocomplete="off">
+        <div id="cfg-err" class="login-err"></div>
+        <button class="login-btn" id="cfg-save">연결 테스트 후 저장</button>
         <div class="login-divider"></div>
-        <div class="login-hint">엔지니어: E001~E003 / 1234&nbsp;&nbsp;|&nbsp;&nbsp;관리자: A001 / admin</div>
+        <div class="login-hint">Supabase → Settings → API Keys 에서 복사하세요</div>
       </div>
     </div>
-
   </div></div>
 <script>
 'use strict';
@@ -334,11 +350,31 @@ const SAMPLE_LOGS=[
 ];
 
 /* ═══════════════════════════════════════════════════════
-   ③ SUPABASE 설정 ★ 여기에 본인 키를 입력하세요 ★
+   ③ SUPABASE — REST API 직접 호출 (CDN 없음, localStorage 저장)
 ═══════════════════════════════════════════════════════ */
-const SUPABASE_URL = 'https://fnsshneehtsjvulkwhvj.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZuc3Nobm1WlaHRzanZ1bGt3aHZqliwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkyMjA5MjEsImV4cCI6MjA2NDc4MDkyMX0.64zonIneAyi2snNGaK3N4eoEF29THv6OdJZiMH1aDhM'
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+let CFG = {
+  url: (localStorage.getItem('hkc_url')||'').trim(),
+  key: (localStorage.getItem('hkc_key')||'').trim()
+};
+const isConfigured = () => CFG.url.startsWith('https://') && CFG.key.startsWith('eyJ');
+
+/* ── Supabase REST API 헬퍼 ───────────────────────────── */
+async function sbGet(table, query=''){
+  const r = await fetch(`${CFG.url}/rest/v1/${table}${query?'?'+query:''}`, {
+    headers:{'apikey':CFG.key,'Authorization':'Bearer '+CFG.key}
+  });
+  if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e.message||r.status);}
+  return r.json();
+}
+async function sbPost(table, body){
+  const r = await fetch(`${CFG.url}/rest/v1/${table}`, {
+    method:'POST',
+    headers:{'apikey':CFG.key,'Authorization':'Bearer '+CFG.key,'Content-Type':'application/json','Prefer':'return=representation'},
+    body: JSON.stringify(body)
+  });
+  if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e.message||r.status);}
+  return r.json();
+}
 
 /* ── DB ↔ JS 필드명 변환 헬퍼 ─────────────────────────── */
 const toLog = r => ({
@@ -372,7 +408,7 @@ const S={
   newLog:{custName:'',projName:'',visitDate:today(),content:'',status:'완료',nextVisit:'',requests:[]},
   filter:{cust:'',emp:'',q:''},
   isRec:false,aiLoading:false,saved:false,
-  modal:null,
+  modal:null,  modalTab:'cust',  custSearch:'',  projSearch:'',
   csvResult:null,   // {count, filename, reqCount, totalAmt} — CSV 성공화면
   offline:!navigator.onLine,
   showPw:false,     // 비밀번호 표시 토글
@@ -382,23 +418,20 @@ const fmt=n=>Number(n).toLocaleString('ko-KR')+'원';
 const fmtDate=s=>s?s.replace(/-/g,'.'):'';
 const statusBadge=s=>({완료:'b-ok',진행중:'b-progress',보류:'b-hold',재방문필요:'b-revisit'}[s]||'b-hold');
 async function loadData(){
+  if(!isConfigured()) return;
   try{
-    const [logsRes,empsRes,custsRes]=await Promise.all([
-      sb.from('hkc_logs').select('*').order('created_at',{ascending:false}),
-      sb.from('hkc_employees').select('*'),
-      sb.from('hkc_customers').select('*'),
+    const [logs,emps,custs]=await Promise.all([
+      sbGet('hkc_logs','order=created_at.desc'),
+      sbGet('hkc_employees','select=*'),
+      sbGet('hkc_customers','select=*'),
     ]);
-    if(empsRes.error){console.error('직원 오류:',JSON.stringify(empsRes.error));throw empsRes.error;}
-    if(logsRes.error){console.error('로그 오류:',JSON.stringify(logsRes.error));throw logsRes.error;}
-    if(custsRes.error){console.error('고객사 오류:',JSON.stringify(custsRes.error));throw custsRes.error;}
-    S.logs      = (logsRes.data||[]).map(toLog);
-    S.employees = empsRes.data||[];
-    S.customers = (custsRes.data||[]).map(toCust);
-    console.log('데이터 로드 완료 — 직원:'+S.employees.length+' 고객사:'+S.customers.length+' 로그:'+S.logs.length);
+    S.logs      = (logs||[]).map(toLog);
+    S.employees = emps||[];
+    S.customers = (custs||[]).map(toCust);
+    console.log('로드완료 직원:'+S.employees.length+' 고객사:'+S.customers.length+' 로그:'+S.logs.length);
   }catch(e){
-    const msg=e?.message||e?.code||JSON.stringify(e);
-    console.error('Supabase 상세오류:',msg);
-    showToast('⚠️ DB 오류: '+msg);
+    console.error('loadData 오류:',e.message);
+    showToast('⚠️ DB 오류: '+e.message);
   }
 }
 
@@ -408,6 +441,7 @@ async function loadData(){
 const root=document.getElementById('app');
 
 function render(){
+  if(!isConfigured()){root.innerHTML=renderSetup();bindSetup();return;}
   if(!S.user){root.innerHTML=renderLogin();bindLogin();return;}
   root.innerHTML=`
     ${S.offline?`<div class="offline-bar">📵 오프라인 — 인터넷 연결 후 데이터가 저장됩니다</div>`:''}
@@ -420,6 +454,55 @@ function render(){
     ${S.csvResult?renderCSVSuccess():''}
   `;
   bindMain();
+}
+
+/* ── 최초 설정 화면 (Supabase 키 입력) ── */
+function renderSetup(){
+  return`<div class="login">
+    <div class="login-top">
+      <div class="login-ko"><span>한국</span>클라우드</div>
+      <div class="login-accent"></div>
+      <div class="login-en-row">
+        <span class="login-en">SUPABASE 초기 설정</span>
+      </div>
+    </div>
+    <div class="login-bottom">
+      <div class="login-card">
+        <label class="login-label">Supabase Project URL</label>
+        <input id="cfg-url" class="login-id-input" placeholder="https://xxxx.supabase.co" style="font-size:13px;font-weight:400" autocomplete="off" />
+        <label class="login-label">Supabase API Key (anon)</label>
+        <input id="cfg-key" class="login-id-input" placeholder="eyJhbGc..." style="font-size:13px;font-weight:400" autocomplete="off" />
+        <div id="cfg-err" class="login-err"></div>
+        <button class="login-btn" id="cfg-save">연결 테스트 후 저장</button>
+        <div class="login-divider"></div>
+        <div class="login-hint">Supabase → Settings → API Keys 에서 복사하세요</div>
+      </div>
+    </div>
+  </div>`;
+}
+function bindSetup(){
+  document.getElementById('cfg-save')?.addEventListener('click',async()=>{
+    const url=(document.getElementById('cfg-url')?.value||'').trim();
+    const key=(document.getElementById('cfg-key')?.value||'').trim();
+    const errEl=document.getElementById('cfg-err');
+    if(!url||!key){if(errEl)errEl.textContent='URL과 KEY를 모두 입력하세요.';return;}
+    if(!url.startsWith('https://')){if(errEl)errEl.textContent='URL은 https://로 시작해야 합니다.';return;}
+    if(!key.startsWith('eyJ')){if(errEl)errEl.textContent='API Key는 eyJ로 시작해야 합니다.';return;}
+    if(errEl)errEl.textContent='연결 테스트 중...';
+    try{
+      const r=await fetch(url+'/rest/v1/hkc_employees?select=id&limit=1',{
+        headers:{'apikey':key,'Authorization':'Bearer '+key}
+      });
+      if(!r.ok) throw new Error('HTTP '+r.status+' — URL 또는 KEY를 확인하세요');
+      localStorage.setItem('hkc_url',url);
+      localStorage.setItem('hkc_key',key);
+      CFG.url=url;CFG.key=key;
+      showToast('✅ 연결 성공! 로그인 화면으로 이동합니다');
+      setTimeout(()=>render(),1000);
+    }catch(e){
+      if(errEl)errEl.textContent='연결 실패: '+e.message;
+    }
+  });
 }
 
 /* ── 로그인 화면 — 상단/하단 분할 타이포그래피 디자인 ── */
@@ -496,19 +579,30 @@ function renderNewLog(){
   <div class="sec-row"><span class="sec-title">작업일지 작성</span></div>
 
   <div class="card">
-    <div class="fl">고객사 <span style="color:#9EA3B5;font-weight:400">(선택 또는 직접 입력)</span></div>
-    <input id="nl-cust" list="cust-list" value="${S.newLog.custName}"
-      placeholder="고객사명 선택 또는 직접 입력" style="margin-bottom:10px" />
-    <datalist id="cust-list">
-      ${S.customers.map(c=>`<option value="${c.name}">`).join('')}
-    </datalist>
-
-    <div class="fl">프로젝트 <span style="color:#9EA3B5;font-weight:400">(선택 또는 직접 입력)</span></div>
+    <div class="fl">고객사</div>
+    ${S.newLog.custName
+      ? `<div class="cust-selected-badge">
+           <span>${S.newLog.custName}</span>
+           <button id="nl-cust-clear" title="변경">✕</button>
+         </div>`
+      : `<div class="cust-search-wrap">
+           <span class="cust-search-icon">${I.search}</span>
+           <input id="nl-cust-q" value="${S.custSearch}" placeholder="고객사 검색..." autocomplete="off" />
+         </div>
+         <div class="cust-select-list">
+           ${(S.customers.filter(c=>!S.custSearch||c.name.includes(S.custSearch))).map(c=>`
+             <div class="cust-select-item" data-cust="${c.name}">
+               <span>${c.name}</span>
+             </div>`).join('') || '<div style="padding:10px 12px;font-size:12px;color:#9EA3B5">검색 결과 없음</div>'}
+         </div>`
+    }
+    ${S.newLog.custName ? `
+    <div class="fl" style="margin-top:10px">프로젝트 <span style="color:#9EA3B5;font-weight:400">(선택 또는 직접 입력)</span></div>
     <input id="nl-proj" list="proj-list" value="${S.newLog.projName}"
       placeholder="프로젝트명 선택 또는 직접 입력" />
     <datalist id="proj-list">
       ${allProjects.map(p=>`<option value="${p}">`).join('')}
-    </datalist>
+    </datalist>` : ''}
   </div>
 
   <div class="card">
@@ -691,26 +785,61 @@ function renderCSVSuccess(){
 
 /* ── Settings Modal ── */
 function renderModal(){
+  const tab=S.modalTab||'cust';
   return`<div class="modal-backdrop" id="modal-backdrop">
     <div class="modal-sheet">
       <div class="modal-handle"></div>
-      <div class="modal-title">설정 / 관리</div>
-      <div style="margin-bottom:16px">
-        <div class="fl">고객사 관리</div>
-        <div class="chip-list">${S.customers.map(c=>`<span class="chip">${c.name}</span>`).join('')}</div>
-        <div style="display:flex;gap:8px;margin-top:10px">
-          <input id="new-cust-name" placeholder="새 고객사명" style="flex:1" />
-          <button class="btn-sm btn-ai" id="btn-add-cust">${I.plus} 추가</button>
+      <div class="modal-title">관리자 설정</div>
+      <div class="modal-tabs">
+        <button class="modal-tab${tab==='cust'?' active':''}" data-mtab="cust">고객사 관리</button>
+        <button class="modal-tab${tab==='emp'?' active':''}" data-mtab="emp">직원 관리</button>
+      </div>
+
+      ${tab==='cust'?`
+      <div>
+        ${S.customers.map(c=>`
+          <div class="mgmt-item">
+            <div class="mgmt-item-left">
+              <span class="mgmt-item-name">${c.name}</span>
+              <span class="mgmt-item-sub">${(c.projects||[]).join(', ')||'프로젝트 없음'}</span>
+            </div>
+            <button class="btn-del del-cust" data-id="${c.id}">삭제</button>
+          </div>`).join('')}
+        <div class="add-form">
+          <div class="add-form-title">➕ 고객사 추가</div>
+          <input id="new-cust-name" placeholder="고객사명" />
+          <button class="btn-primary" id="btn-add-cust" style="margin-top:4px;padding:10px">${I.plus} 추가</button>
         </div>
-      </div>
-      <div style="margin-bottom:16px">
-        <div class="fl">직원 현황</div>
-        ${S.employees.map(e=>`<div class="settings-item">
-          <span class="settings-label">${e.name} <span class="badge ${e.role==='admin'?'b-progress':'b-ok'}">${e.role==='admin'?'관리자':'엔지니어'}</span></span>
-          <span class="settings-val">${e.id}</span>
-        </div>`).join('')}
-      </div>
-      <button class="btn-primary" id="btn-close-modal">닫기</button>
+      </div>`:``}
+
+      ${tab==='emp'?`
+      <div>
+        ${S.employees.map(e=>`
+          <div class="mgmt-item">
+            <div class="mgmt-item-left">
+              <span class="mgmt-item-name">${e.name} <span class="badge ${e.role==='admin'?'b-progress':'b-ok'}">${e.role==='admin'?'관리자':'엔지니어'}</span></span>
+              <span class="mgmt-item-sub">사번: ${e.id}</span>
+            </div>
+            ${e.id!==S.user?.id?`<button class="btn-del del-emp" data-id="${e.id}">삭제</button>`:`<span style="font-size:11px;color:#9EA3B5">현재 계정</span>`}
+          </div>`).join('')}
+        <div class="add-form">
+          <div class="add-form-title">➕ 직원 추가</div>
+          <div class="form-row">
+            <input id="new-emp-id" placeholder="사번 (예: E004)" />
+            <input id="new-emp-name" placeholder="이름" />
+          </div>
+          <div class="form-row">
+            <select id="new-emp-role">
+              <option value="engineer">엔지니어</option>
+              <option value="admin">관리자</option>
+            </select>
+            <input id="new-emp-pw" placeholder="비밀번호" type="password" />
+          </div>
+          <button class="btn-primary" id="btn-add-emp" style="padding:10px">${I.plus} 직원 추가</button>
+        </div>
+      </div>`:``}
+
+      <button class="btn-primary" id="btn-close-modal" style="margin-top:12px;background:#6B7280">닫기</button>
     </div>
   </div>`;
 }
@@ -727,18 +856,18 @@ function bindLogin(){
     const errEl=document.getElementById('lerr');
     if(!id||!pw){if(errEl)errEl.textContent='사원번호와 비밀번호를 입력하세요.';return;}
     if(errEl)errEl.textContent='확인 중...';
-    /* 1차: 캐시된 직원 목록에서 확인 */
-    let emp=S.employees.find(e=>e.id===id&&e.pw===pw);
-    /* 2차: 캐시 없으면 Supabase 직접 조회 */
-    if(!emp){
-      try{
-        const{data,error}=await sb.from('hkc_employees')
-          .select('*').eq('id',id).eq('pw',pw).single();
-        if(!error&&data) emp=data;
-      }catch(e){console.error('로그인 조회 오류:',e);}
+    try{
+      const rows=await sbGet('hkc_employees','id=eq.'+id+'&pw=eq.'+pw+'&select=*');
+      if(rows&&rows.length>0){
+        S.user=rows[0];S.showPw=false;
+        await loadData();render();
+      } else {
+        if(errEl)errEl.textContent='아이디 또는 비밀번호가 올바르지 않습니다.';
+      }
+    }catch(e){
+      console.error('로그인오류:',e.message);
+      if(errEl)errEl.textContent='연결오류: '+e.message;
     }
-    if(emp){S.user=emp;S.showPw=false;await loadData();render();}
-    else if(errEl)errEl.textContent='아이디 또는 비밀번호가 올바르지 않습니다.';
   };
   document.getElementById('lbtn')?.addEventListener('click',doLogin);
   document.getElementById('lpw')?.addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
@@ -773,9 +902,14 @@ function bindMain(){
 
 function bindNewLog(){
   const nl=S.newLog;
-  /* 고객사 직접입력/선택 */
-  document.getElementById('nl-cust')?.addEventListener('input',e=>{nl.custName=e.target.value;nl.projName='';});
-  document.getElementById('nl-cust')?.addEventListener('change',e=>{nl.custName=e.target.value;nl.projName='';render();});
+  /* 고객사 검색 */
+  document.getElementById('nl-cust-q')?.addEventListener('input',e=>{S.custSearch=e.target.value;render();});
+  /* 고객사 리스트 선택 */
+  document.querySelectorAll('.cust-select-item').forEach(item=>item.addEventListener('click',()=>{
+    nl.custName=item.dataset.cust;nl.projName='';S.custSearch='';render();
+  }));
+  /* 고객사 선택 해제 */
+  document.getElementById('nl-cust-clear')?.addEventListener('click',()=>{nl.custName='';nl.projName='';render();});
   /* 프로젝트 직접입력/선택 */
   document.getElementById('nl-proj')?.addEventListener('input',e=>{nl.projName=e.target.value;});
   document.getElementById('nl-date')?.addEventListener('change',e=>{nl.visitDate=e.target.value;});
@@ -831,9 +965,9 @@ function bindNewLog(){
     if(!nl.custName||!nl.projName||!nl.content){showToast('⚠️ 고객사, 프로젝트, 작업내용은 필수입니다');return;}
     const log={...nl,empId:S.user.id,empName:S.user.name,createdAt:new Date().toISOString()};
     try{
-      const{data,error}=await sb.from('hkc_logs').insert(fromLog(log)).select().single();
-      if(error) throw error;
-      S.logs.unshift(toLog(data));
+      const rows=await sbPost('hkc_logs', fromLog(log));
+      const saved=Array.isArray(rows)?rows[0]:rows;
+      S.logs.unshift(toLog(saved));
     }catch(e){
       showToast('⚠️ 저장 실패: '+e.message);return;
     }
@@ -854,17 +988,65 @@ function bindAdmin(){
 function bindModal(){
   document.getElementById('modal-backdrop')?.addEventListener('click',e=>{if(e.target.id==='modal-backdrop'){S.modal=null;render();}});
   document.getElementById('btn-close-modal')?.addEventListener('click',()=>{S.modal=null;render();});
+  /* 탭 전환 */
+  document.querySelectorAll('.modal-tab').forEach(b=>b.addEventListener('click',()=>{
+    S.modalTab=b.dataset.mtab;render();
+  }));
+  /* 고객사 추가 */
   document.getElementById('btn-add-cust')?.addEventListener('click',async()=>{
     const name=(document.getElementById('new-cust-name')?.value||'').trim();
     if(!name){showToast('⚠️ 고객사명을 입력하세요');return;}
     if(S.customers.find(c=>c.name===name)){showToast('이미 등록된 고객사입니다');return;}
     try{
-      const{data,error}=await sb.from('hkc_customers').insert({name,projects:[]}).select().single();
-      if(error) throw error;
-      S.customers.push(toCust(data));
+      const rows=await sbPost('hkc_customers',{name,projects:[]});
+      const saved=Array.isArray(rows)?rows[0]:rows;
+      S.customers.push(toCust(saved));
       showToast('✅ '+name+' 추가됨');render();
     }catch(e){showToast('⚠️ 추가 실패: '+e.message);}
   });
+  /* 고객사 삭제 */
+  document.querySelectorAll('.del-cust').forEach(b=>b.addEventListener('click',async()=>{
+    const id=Number(b.dataset.id);
+    const cust=S.customers.find(c=>c.id===id);
+    if(!cust||!confirm(`"${cust.name}" 고객사를 삭제할까요?`)) return;
+    try{
+      await fetch(`${CFG.url}/rest/v1/hkc_customers?id=eq.${id}`,{
+        method:'DELETE',
+        headers:{'apikey':CFG.key,'Authorization':'Bearer '+CFG.key}
+      });
+      S.customers=S.customers.filter(c=>c.id!==id);
+      showToast('🗑️ '+cust.name+' 삭제됨');render();
+    }catch(e){showToast('⚠️ 삭제 실패: '+e.message);}
+  }));
+  /* 직원 추가 */
+  document.getElementById('btn-add-emp')?.addEventListener('click',async()=>{
+    const id=(document.getElementById('new-emp-id')?.value||'').trim().toUpperCase();
+    const name=(document.getElementById('new-emp-name')?.value||'').trim();
+    const role=document.getElementById('new-emp-role')?.value||'engineer';
+    const pw=(document.getElementById('new-emp-pw')?.value||'').trim();
+    if(!id||!name||!pw){showToast('⚠️ 사번, 이름, 비밀번호를 모두 입력하세요');return;}
+    if(S.employees.find(e=>e.id===id)){showToast('⚠️ 이미 존재하는 사번입니다');return;}
+    try{
+      const rows=await sbPost('hkc_employees',{id,name,role,pw});
+      const saved=Array.isArray(rows)?rows[0]:rows;
+      S.employees.push(saved);
+      showToast('✅ '+name+' 직원 추가됨');render();
+    }catch(e){showToast('⚠️ 추가 실패: '+e.message);}
+  });
+  /* 직원 삭제 */
+  document.querySelectorAll('.del-emp').forEach(b=>b.addEventListener('click',async()=>{
+    const id=b.dataset.id;
+    const emp=S.employees.find(e=>e.id===id);
+    if(!emp||!confirm(`"${emp.name}" 직원을 삭제할까요?`)) return;
+    try{
+      await fetch(`${CFG.url}/rest/v1/hkc_employees?id=eq.${id}`,{
+        method:'DELETE',
+        headers:{'apikey':CFG.key,'Authorization':'Bearer '+CFG.key}
+      });
+      S.employees=S.employees.filter(e=>e.id!==id);
+      showToast('🗑️ '+emp.name+' 삭제됨');render();
+    }catch(e){showToast('⚠️ 삭제 실패: '+e.message);}
+  }));
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -924,7 +1106,7 @@ function setupPWA(){
 window.addEventListener('online',()=>{S.offline=false;render();});
 window.addEventListener('offline',()=>{S.offline=true;render();});
 
-(async()=>{setupPWA();await loadData();render();})();
+(async()=>{setupPWA();if(isConfigured()) await loadData();render();})();
 </script>
 
 
