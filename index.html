@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0114)file:///D:/%EB%8B%A4%EC%9A%B4%EB%A1%9C%EB%93%9C/HKC_%EC%9C%A0%EC%A7%80%EB%B3%B4%EC%88%98%EC%9D%BC%EC%A7%80_10.html -->
+<!-- saved from url=(0114)file:///D:/%EB%8B%A4%EC%9A%B4%EB%A1%9C%EB%93%9C/HKC_%EC%9C%A0%EC%A7%80%EB%B3%B4%EC%88%98%EC%9D%BC%EC%A7%80_11.html -->
 <html lang="ko"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
@@ -289,7 +289,7 @@ input[list]{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3
 .csv-modal-btn{width:100%;background:linear-gradient(135deg,#E8911A,#F0A832);border:none;border-radius:12px;padding:14px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 14px rgba(232,145,26,.35)}
 .csv-modal-btn:active{opacity:.88}
 </style>
-<link rel="manifest" href="blob:null/f8bde2bb-d5d4-4fd0-aefd-73d940817857"></head>
+<link rel="manifest" href="blob:null/70687831-d179-4031-8d29-e84475cd1f6b"></head>
 <body>
 <div id="app"><div class="login">
     <div class="login-top">
@@ -1075,7 +1075,7 @@ function bindNewLog(){
     S.aiLoading=false;render();
   });
 
-  document.getElementById('btn-save')?.addEventListener('click',async()=>{
+  document.getElementById('btn-save')?.addEventListener('click',busy(async()=>{
     if(!nl.custName||!nl.projName||!nl.content){showToast('⚠️ 고객사, 프로젝트, 작업내용은 필수입니다');return;}
     const log={...nl,empId:S.user.id,empName:S.user.name,createdAt:new Date().toISOString()};
     try{
@@ -1086,10 +1086,11 @@ function bindNewLog(){
       showToast('⚠️ 저장 실패: '+e.message);return;
     }
     S.newLog={custName:'',projName:'',visitDate:today(),content:'',status:'완료',nextVisit:'',requests:[],workType:''};
+    S.showHistory=false;
     S.saved=true;render();
     setTimeout(()=>{S.saved=false;render();},2400);
     showToast('✅ 작업일지가 저장되었습니다');
-  });
+  }));
 }
 
 function bindAdmin(){
