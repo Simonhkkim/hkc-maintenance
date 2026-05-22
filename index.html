@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0113)file:///D:/%EB%8B%A4%EC%9A%B4%EB%A1%9C%EB%93%9C/HKC_%EC%9C%A0%EC%A7%80%EB%B3%B4%EC%88%98%EC%9D%BC%EC%A7%80_6.html -->
+<!-- saved from url=(0113)file:///D:/%EB%8B%A4%EC%9A%B4%EB%A1%9C%EB%93%9C/HKC_%EC%9C%A0%EC%A7%80%EB%B3%B4%EC%88%98%EC%9D%BC%EC%A7%80_8.html -->
 <html lang="ko"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
@@ -257,6 +257,23 @@ input[list]{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3
 .chip-list{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
 .chip{background:#F0F2F5;border:none;border-radius:6px;padding:5px 10px;font-size:12px;color:#4B5563;font-family:inherit;cursor:pointer}
 
+/* ── 작업종류 칩 ── */
+.work-type-wrap{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.wt-chip{background:#F0F2F5;border:1.5px solid #E5E7EB;border-radius:8px;padding:7px 12px;font-size:12px;color:#4B5563;cursor:pointer;font-family:inherit;transition:all .15s;font-weight:500}
+.wt-chip.sel{background:#1D3557;border-color:#1D3557;color:#fff}
+.wt-chip:active{opacity:.8}
+/* ── 이전 방문 이력 ── */
+.history-toggle{background:none;border:none;color:#E8911A;font-size:12px;cursor:pointer;font-family:inherit;font-weight:500;display:flex;align-items:center;gap:4px;padding:0}
+.history-toggle svg{width:13px;height:13px;fill:none;stroke:#E8911A;stroke-width:2}
+.history-item{background:#F8F9FC;border-radius:8px;padding:10px 12px;margin-bottom:6px;border-left:3px solid #E8911A}
+.history-item:last-child{margin-bottom:0}
+.history-meta{display:flex;align-items:center;gap:6px;margin-bottom:4px;flex-wrap:wrap}
+.history-date{font-size:11px;color:#6B7280;font-weight:500}
+.history-emp{font-size:11px;color:#9EA3B5}
+.history-content{font-size:12px;color:#374151;line-height:1.6;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+/* ── 직원 편집 폼 ── */
+.edit-form{background:#FFFBF0;border:1px solid #FDE68A;border-radius:8px;padding:10px;margin-top:6px}
+.edit-form-title{font-size:11px;font-weight:600;color:#92400E;margin-bottom:7px}
 /* ── CSV 성공 모달 ── */
 .csv-modal-backdrop{position:fixed;inset:0;background:rgba(29,53,87,.6);z-index:200;display:flex;align-items:center;justify-content:center;padding:24px}
 .csv-modal{background:#fff;border-radius:22px;padding:32px 24px 24px;text-align:center;width:100%;max-width:320px;box-shadow:0 16px 48px rgba(0,0,0,.2)}
@@ -272,7 +289,7 @@ input[list]{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3
 .csv-modal-btn{width:100%;background:linear-gradient(135deg,#E8911A,#F0A832);border:none;border-radius:12px;padding:14px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 14px rgba(232,145,26,.35)}
 .csv-modal-btn:active{opacity:.88}
 </style>
-<link rel="manifest" href="blob:null/e9133068-18f7-4220-8abb-8f96991500e7"></head>
+<link rel="manifest" href="blob:null/fef165ae-c4ac-4db1-892d-7d1e0e33fea8"></head>
 <body>
 <div id="app"><div class="login">
     <div class="login-top">
@@ -377,6 +394,22 @@ async function sbPost(table, body){
   if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e.message||r.status);}
   return r.json();
 }
+async function sbPatch(table, filter, body){
+  const r = await fetch(`${CFG.url}/rest/v1/${table}?${filter}`,{
+    method:'PATCH',
+    headers:{'apikey':CFG.key,'Authorization':'Bearer '+CFG.key,'Content-Type':'application/json','Prefer':'return=representation'},
+    body: JSON.stringify(body)
+  });
+  if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e.message||r.status);}
+  return r.json();
+}
+async function sbDelete(table, filter){
+  const r = await fetch(`${CFG.url}/rest/v1/${table}?${filter}`,{
+    method:'DELETE',
+    headers:{'apikey':CFG.key,'Authorization':'Bearer '+CFG.key}
+  });
+  if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e.message||r.status);}
+}
 
 /* ── DB ↔ JS 필드명 변환 헬퍼 ─────────────────────────── */
 const toLog = r => ({
@@ -385,6 +418,7 @@ const toLog = r => ({
   custName:  r.cust_name, projName: r.proj_name,
   visitDate: r.visit_date, content: r.content,
   status:    r.status,
+  workType:  r.work_type||'',
   requests:  Array.isArray(r.requests) ? r.requests : [],
   nextVisit: r.next_visit,
   createdAt: r.created_at,
@@ -394,6 +428,7 @@ const fromLog = l => ({
   cust_name:  l.custName, proj_name: l.projName,
   visit_date: l.visitDate, content:  l.content,
   status:     l.status,
+  work_type:  l.workType||null,
   requests:   l.requests || [],
   next_visit: l.nextVisit || null,
   created_at: l.createdAt || new Date().toISOString(),
@@ -407,10 +442,10 @@ const S={
   user:null,tab:'new',
   logs:[],employees:[],customers:[],
   expandedId:null,
-  newLog:{custName:'',projName:'',visitDate:today(),content:'',status:'완료',nextVisit:'',requests:[]},
+  newLog:{custName:'',projName:'',visitDate:today(),content:'',status:'완료',nextVisit:'',requests:[],workType:''},
   filter:{cust:'',emp:'',q:''},
   isRec:false,aiLoading:false,saved:false,
-  modal:null,  modalTab:'cust',  custSearch:'',  projSearch:'',
+  modal:null,  modalTab:'cust',  custSearch:'',  projSearch:'',  workTypes:[],  editEmpId:null,  showHistory:false,
   csvResult:null,   // {count, filename, reqCount, totalAmt} — CSV 성공화면
   offline:!navigator.onLine,
   showPw:false,     // 비밀번호 표시 토글
@@ -422,14 +457,16 @@ const statusBadge=s=>({완료:'b-ok',진행중:'b-progress',보류:'b-hold',재�
 async function loadData(){
   if(!isConfigured()) return;
   try{
-    const [logs,emps,custs]=await Promise.all([
+    const [logs,emps,custs,wts]=await Promise.all([
       sbGet('hkc_logs','order=created_at.desc'),
       sbGet('hkc_employees','select=*'),
       sbGet('hkc_customers','select=*'),
+      sbGet('hkc_work_types','order=id.asc').catch(()=>[]),
     ]);
     S.logs      = (logs||[]).map(toLog);
     S.employees = emps||[];
     S.customers = (custs||[]).map(toCust);
+    S.workTypes = wts||[];
     console.log('로드완료 직원:'+S.employees.length+' 고객사:'+S.customers.length+' 로그:'+S.logs.length);
   }catch(e){
     console.error('loadData 오류:',e.message);
@@ -622,6 +659,36 @@ function renderNewLog(){
     </div>
   </div>
 
+  ${S.newLog.custName ? (() => {
+    const prevLogs = S.logs.filter(l=>l.custName===S.newLog.custName).slice(0,5);
+    return prevLogs.length>0 ? `
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:${S.showHistory?10:0}px">
+        <div class="fl" style="margin:0">📋 이전 방문 이력 <span style="color:#E8911A">(${prevLogs.length}건)</span></div>
+        <button class="history-toggle" id="btn-history-toggle">
+          ${S.showHistory?I.chevU:I.chevD} ${S.showHistory?'접기':'펼치기'}
+        </button>
+      </div>
+      ${S.showHistory ? prevLogs.map(l=>`
+        <div class="history-item">
+          <div class="history-meta">
+            <span class="history-date">${fmtDate(l.visitDate)}</span>
+            <span class="badge ${statusBadge(l.status)}">${l.status}</span>
+            ${l.workType?`<span class="badge b-hold">${l.workType}</span>`:''}
+            <span class="history-emp">${l.empName}</span>
+          </div>
+          <p class="history-content">${l.content}</p>
+        </div>`).join('') : ''}
+    </div>` : '';
+  })() : ''}
+
+  <div class="card">
+    <div class="fl">작업종류 <span style="color:#9EA3B5;font-weight:400">(선택)</span></div>
+    <div class="work-type-wrap">
+      ${S.workTypes.map(t=>`<button class="wt-chip${S.newLog.workType===t.name?' sel':''}" data-wt="${t.name}">${t.name}</button>`).join('')}
+    </div>
+  </div>
+
   <div class="card">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
       <div class="fl" style="margin:0">작업내용</div>
@@ -739,6 +806,7 @@ function renderLogCard(l,showEmp){
         <div class="log-name">
           <span>${l.custName}</span>
           <span class="badge ${statusBadge(l.status)}">${l.status}</span>
+          ${l.workType?`<span class="badge b-hold">${l.workType}</span>`:''}
           ${l.requests.length>0?`<span class="badge b-req">요구 ${l.requests.length}건</span>`:''}
         </div>
         <div class="log-proj">${l.projName}</div>
@@ -793,8 +861,9 @@ function renderModal(){
       <div class="modal-handle"></div>
       <div class="modal-title">관리자 설정</div>
       <div class="modal-tabs">
-        <button class="modal-tab${tab==='cust'?' active':''}" data-mtab="cust">고객사 관리</button>
-        <button class="modal-tab${tab==='emp'?' active':''}" data-mtab="emp">직원 관리</button>
+        <button class="modal-tab${tab==='cust'?' active':''}" data-mtab="cust">고객사</button>
+        <button class="modal-tab${tab==='emp'?' active':''}" data-mtab="emp">직원</button>
+        <button class="modal-tab${tab==='wt'?' active':''}" data-mtab="wt">작업종류</button>
       </div>
 
       ${tab==='cust'?`
@@ -817,12 +886,30 @@ function renderModal(){
       ${tab==='emp'?`
       <div>
         ${S.employees.map(e=>`
-          <div class="mgmt-item">
-            <div class="mgmt-item-left">
-              <span class="mgmt-item-name">${e.name} <span class="badge ${e.role==='admin'?'b-progress':'b-ok'}">${e.role==='admin'?'관리자':'엔지니어'}</span></span>
-              <span class="mgmt-item-sub">사번: ${e.id}</span>
+          <div class="mgmt-item" style="flex-direction:column;align-items:stretch">
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <div class="mgmt-item-left">
+                <span class="mgmt-item-name">${e.name} <span class="badge ${e.role==='admin'?'b-progress':'b-ok'}">${e.role==='admin'?'관리자':'엔지니어'}</span></span>
+                <span class="mgmt-item-sub">사번: ${e.id}</span>
+              </div>
+              <div style="display:flex;gap:5px">
+                <button class="btn-sm btn-ai edit-emp" data-id="${e.id}" style="padding:4px 8px">${I.edit} 편집</button>
+                ${e.id!==S.user?.id?`<button class="btn-del del-emp" data-id="${e.id}">삭제</button>`:`<span style="font-size:11px;color:#9EA3B5">본인</span>`}
+              </div>
             </div>
-            ${e.id!==S.user?.id?`<button class="btn-del del-emp" data-id="${e.id}">삭제</button>`:`<span style="font-size:11px;color:#9EA3B5">현재 계정</span>`}
+            ${S.editEmpId===e.id?`
+            <div class="edit-form">
+              <div class="edit-form-title">✏️ 직원 정보 편집</div>
+              <div class="form-row">
+                <input id="edit-emp-name" value="${e.name}" placeholder="이름" />
+                <select id="edit-emp-role">
+                  <option value="engineer"${e.role==='engineer'?' selected':''}>엔지니어</option>
+                  <option value="admin"${e.role==='admin'?' selected':''}>관리자</option>
+                </select>
+              </div>
+              <input id="edit-emp-pw" type="password" placeholder="새 비밀번호 (변경 시만 입력)" />
+              <button class="btn-primary save-emp-edit" data-id="${e.id}" style="margin-top:7px;padding:9px;font-size:13px">${I.check} 저장</button>
+            </div>`:``}
           </div>`).join('')}
         <div class="add-form">
           <div class="add-form-title">➕ 직원 추가</div>
@@ -838,6 +925,22 @@ function renderModal(){
             <input id="new-emp-pw" placeholder="비밀번호" type="password" />
           </div>
           <button class="btn-primary" id="btn-add-emp" style="padding:10px">${I.plus} 직원 추가</button>
+        </div>
+      </div>`:``}
+
+      ${tab==='wt'?`
+      <div>
+        ${S.workTypes.map(t=>`
+          <div class="mgmt-item">
+            <span class="mgmt-item-name">${t.name}</span>
+            <button class="btn-del del-wt" data-id="${t.id}">삭제</button>
+          </div>`).join('')}
+        <div class="add-form">
+          <div class="add-form-title">➕ 작업종류 추가</div>
+          <div style="display:flex;gap:8px">
+            <input id="new-wt-name" placeholder="작업종류명 (예: 정기점검)" style="flex:1" />
+            <button class="btn-sm btn-ai" id="btn-add-wt">${I.plus} 추가</button>
+          </div>
         </div>
       </div>`:``}
 
@@ -911,7 +1014,7 @@ function bindNewLog(){
     nl.custName=item.dataset.cust;nl.projName='';S.custSearch='';render();
   }));
   /* 고객사 선택 해제 */
-  document.getElementById('nl-cust-clear')?.addEventListener('click',()=>{nl.custName='';nl.projName='';render();});
+  document.getElementById('nl-cust-clear')?.addEventListener('click',()=>{nl.custName='';nl.projName='';S.showHistory=false;render();});
   /* 프로젝트 직접입력/선택 */
   document.getElementById('nl-proj')?.addEventListener('input',e=>{nl.projName=e.target.value;});
   document.getElementById('nl-date')?.addEventListener('change',e=>{nl.visitDate=e.target.value;});
@@ -926,6 +1029,13 @@ function bindNewLog(){
   document.querySelectorAll('.req-desc').forEach(i=>i.addEventListener('input',e=>{nl.requests[Number(i.dataset.i)].desc=e.target.value;}));
   document.querySelectorAll('.req-amt').forEach(i=>i.addEventListener('input',e=>{
     nl.requests[Number(i.dataset.i)].amount=Number(e.target.value)||null;render();
+  }));
+
+  /* 이전 방문 이력 토글 */
+  document.getElementById('btn-history-toggle')?.addEventListener('click',()=>{S.showHistory=!S.showHistory;render();});
+  /* 작업종류 칩 선택 */
+  document.querySelectorAll('.wt-chip').forEach(b=>b.addEventListener('click',()=>{
+    nl.workType=nl.workType===b.dataset.wt?'':b.dataset.wt;render();
   }));
 
   document.getElementById('btn-voice')?.addEventListener('click',()=>{
@@ -973,7 +1083,7 @@ function bindNewLog(){
     }catch(e){
       showToast('⚠️ 저장 실패: '+e.message);return;
     }
-    S.newLog={custName:'',projName:'',visitDate:today(),content:'',status:'완료',nextVisit:'',requests:[]};
+    S.newLog={custName:'',projName:'',visitDate:today(),content:'',status:'완료',nextVisit:'',requests:[],workType:''};
     S.saved=true;render();
     setTimeout(()=>{S.saved=false;render();},2400);
     showToast('✅ 작업일지가 저장되었습니다');
@@ -1039,14 +1149,56 @@ function bindModal(){
   document.querySelectorAll('.del-emp').forEach(b=>b.addEventListener('click',async()=>{
     const id=b.dataset.id;
     const emp=S.employees.find(e=>e.id===id);
-    if(!emp||!confirm(`"${emp.name}" 직원을 삭제할까요?`)) return;
+    if(!emp||!confirm('"'+emp.name+'" 직원을 삭제할까요?')) return;
     try{
-      await fetch(`${CFG.url}/rest/v1/hkc_employees?id=eq.${id}`,{
-        method:'DELETE',
-        headers:{'apikey':CFG.key,'Authorization':'Bearer '+CFG.key}
-      });
+      await sbDelete('hkc_employees','id=eq.'+id);
       S.employees=S.employees.filter(e=>e.id!==id);
       showToast('🗑️ '+emp.name+' 삭제됨');render();
+    }catch(e){showToast('⚠️ 삭제 실패: '+e.message);}
+  }));
+  /* 직원 편집 토글 */
+  document.querySelectorAll('.edit-emp').forEach(b=>b.addEventListener('click',()=>{
+    const id=b.dataset.id;
+    S.editEmpId=S.editEmpId===id?null:id;render();
+  }));
+  /* 직원 편집 저장 */
+  document.querySelectorAll('.save-emp-edit').forEach(b=>b.addEventListener('click',async()=>{
+    const id=b.dataset.id;
+    const name=(document.getElementById('edit-emp-name')?.value||'').trim();
+    const role=document.getElementById('edit-emp-role')?.value||'engineer';
+    const pw=(document.getElementById('edit-emp-pw')?.value||'').trim();
+    if(!name){showToast('⚠️ 이름을 입력하세요');return;}
+    const body={name,role};
+    if(pw) body.pw=pw;
+    try{
+      await sbPatch('hkc_employees','id=eq.'+id,body);
+      const emp=S.employees.find(e=>e.id===id);
+      if(emp){emp.name=name;emp.role=role;if(pw)emp.pw=pw;}
+      S.editEmpId=null;
+      showToast('✅ '+name+' 정보 수정됨');render();
+    }catch(e){showToast('⚠️ 수정 실패: '+e.message);}
+  }));
+  /* 작업종류 추가 */
+  document.getElementById('btn-add-wt')?.addEventListener('click',async()=>{
+    const name=(document.getElementById('new-wt-name')?.value||'').trim();
+    if(!name){showToast('⚠️ 작업종류명을 입력하세요');return;}
+    if(S.workTypes.find(t=>t.name===name)){showToast('이미 존재하는 작업종류입니다');return;}
+    try{
+      const rows=await sbPost('hkc_work_types',{name});
+      const saved=Array.isArray(rows)?rows[0]:rows;
+      S.workTypes.push(saved);
+      showToast('✅ '+name+' 추가됨');render();
+    }catch(e){showToast('⚠️ 추가 실패: '+e.message);}
+  });
+  /* 작업종류 삭제 */
+  document.querySelectorAll('.del-wt').forEach(b=>b.addEventListener('click',async()=>{
+    const id=Number(b.dataset.id);
+    const wt=S.workTypes.find(t=>t.id===id);
+    if(!wt||!confirm('"'+wt.name+'" 작업종류를 삭제할까요?')) return;
+    try{
+      await sbDelete('hkc_work_types','id=eq.'+id);
+      S.workTypes=S.workTypes.filter(t=>t.id!==id);
+      showToast('🗑️ '+wt.name+' 삭제됨');render();
     }catch(e){showToast('⚠️ 삭제 실패: '+e.message);}
   }));
 }
